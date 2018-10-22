@@ -6,6 +6,9 @@ import { css } from "../emotion";
 import Specimen from "../components/Specimen/Specimen";
 import mapSpecimenOption from "../utils/mapSpecimenOption";
 import HighlightedCode from "../components/HighlightedCode/HighlightedCode";
+import { relative } from "path";
+import { isAbsolute } from "upath";
+
 
 function getStyle(theme) {
   return {
@@ -18,7 +21,8 @@ function getStyle(theme) {
       border: "1px solid #eee",
       color: theme.textColor,
       fontFamily: theme.fontMono,
-      fontWeight: 400
+      fontWeight: 400,
+      postion: "relative"
     },
     toggle: {
       textDecoration: "underline",
@@ -28,6 +32,11 @@ function getStyle(theme) {
       WebkitUserSelect: "none",
       userSelect: "none",
       background: "#eee"
+    },
+    copyCode: {
+      position: "absolute",
+      top: 20,
+      right: 20
     }
   };
 }
@@ -73,6 +82,7 @@ class Code extends React.Component {
       <section className={css(styles.container)}>
         {toggle}
         {content}
+        <div className={css(styles.copyCode)}>copy</div>
       </section>
     );
   }
