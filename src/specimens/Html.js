@@ -154,6 +154,7 @@ class Html extends React.Component {
       catalog: { theme, responsiveSizes },
       children,
       frame,
+      frameStyles,
       ...options
     } = this.props;
     const { activeScreenSize, parentWidth, viewSource } = this.state;
@@ -233,6 +234,7 @@ class Html extends React.Component {
                 height={activeScreenSize && activeScreenSize.height}
                 scrolling={frame ? false : true}
                 background={frameBackground}
+                frameStyles={frameStyles}
               >
                 {content}
               </Frame>
@@ -261,7 +263,8 @@ Html.propTypes = {
   dark: PropTypes.bool,
   noSource: PropTypes.bool,
   showSource: PropTypes.bool,
-  frame: PropTypes.bool
+  frame: PropTypes.bool,
+  frameStyles: PropTypes.array
 };
 
 export default Specimen(undefined, undefined, { withChildren: true })(Html);

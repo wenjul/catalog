@@ -4,15 +4,14 @@ Per default, a code toggle button allows easy access to the source without havin
 
 ### Props
 
-- `noSource: boolean` Removes the source code toggle button
-- `showSource: boolean` Shows the source code section by default
-- `frame: boolean` Wraps output in an `<iframe>` (to prevent style collisions and allow for viewport-relative styling (e.g. using `vw` or `position: fixed`))
-- `responsive: boolean | string | array` sets a fixed screensize or allows switching between multiple sizes
-- `light: boolean` a light checkered background (default)
-- `dark: boolean` a dark checkered background
-- `plain: boolean` a transparent background without any padding
-- `span: number[1–6]` width of the specimen
-
+* `noSource: boolean` Removes the source code toggle button
+* `showSource: boolean` Shows the source code section by default
+* `frame: boolean` Wraps output in an `<iframe>` (to prevent style collisions and allow for viewport-relative styling (e.g. using `vw` or `position: fixed`))
+* `responsive: boolean | string | array` sets a fixed screensize or allows switching between multiple sizes
+* `light: boolean` a light checkered background (default)
+* `dark: boolean` a dark checkered background
+* `plain: boolean` a transparent background without any padding
+* `span: number[1–6]` width of the specimen
 
 ### Basic example
 
@@ -57,7 +56,40 @@ frame: true
 ```
 ````
 
+```html
+frame: true
+frameStyles: [https://cdn.bootcss.com/twitter-bootstrap/4.1.3/css/bootstrap.min.css]
+---
+<p>Bootstrap Buttons</p>
+<button type="button" class="btn btn-primary">Primary</button>
+<button type="button" class="btn btn-secondary">Secondary</button>
+<button type="button" class="btn btn-success">Success</button>
+<button type="button" class="btn btn-danger">Danger</button>
+<button type="button" class="btn btn-warning">Warning</button>
+<button type="button" class="btn btn-info">Info</button>
+<button type="button" class="btn btn-light">Light</button>
+<button type="button" class="btn btn-dark">Dark</button>
+<button type="button" class="btn btn-link">Link</button>
+```
 
+````code
+---
+```html
+frame: true
+frameStyles: [https://cdn.bootcss.com/twitter-bootstrap/4.1.3/css/bootstrap.min.css]
+---
+<p>Bootstrap Buttons</p>
+<button type="button" class="btn btn-primary">Primary</button>
+<button type="button" class="btn btn-secondary">Secondary</button>
+<button type="button" class="btn btn-success">Success</button>
+<button type="button" class="btn btn-danger">Danger</button>
+<button type="button" class="btn btn-warning">Warning</button>
+<button type="button" class="btn btn-info">Info</button>
+<button type="button" class="btn btn-light">Light</button>
+<button type="button" class="btn btn-dark">Dark</button>
+<button type="button" class="btn btn-link">Link</button>
+```
+````
 
 ### Responsive Display
 
@@ -147,7 +179,6 @@ responsive: true
 </div>
 ```
 
-
 ### Visual examples
 
 The different background colors:
@@ -173,8 +204,6 @@ And without added styling:
 ```html|span-3,no-source,plain
 html|span-3,no-source,plain
 ```
-
-
 
 ````code|collapsed
 ```html|span-3,no-source

@@ -26,12 +26,13 @@ export default class Frame extends Component {
   }
 
   render() {
-    const { children, width, parentWidth, scrolling, background } = this.props;
+    const { children, width, parentWidth, scrolling, background, frameStyles } = this.props;
     const { catalog: { page: { styles } } } = this.context;
     const height = this.state.height || this.props.height;
     const autoHeight = !this.props.height;
     const scale = Math.min(1, parentWidth / width);
     const scaledHeight = autoHeight ? height : height * scale;
+    const allStyles = Array.prototype.concat(styles, frameStyles);
 
     return (
       <div
@@ -60,7 +61,7 @@ export default class Frame extends Component {
               <style key="stylereset">
                 {"html,body{margin:0;padding:0;}"}
               </style>,
-              ...renderStyles(styles)
+              ...renderStyles(allStyles)
             ]}
             onRender={
               autoHeight
@@ -87,7 +88,8 @@ Frame.propTypes = {
   parentWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   scrolling: PropTypes.bool,
-  background: PropTypes.string
+  background: PropTypes.string,
+  frameStyles: PropTypes.array
 };
 
 Frame.contextTypes = {
