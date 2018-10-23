@@ -14,9 +14,7 @@ const frameStyle = {
 };
 
 const renderStyles = styles => {
-  return styles.map((src, i) => (
-    <link key={i} href={src} rel="stylesheet" type="text/css" />
-  ));
+  return styles.map((src, i) => <link key={i} href={src} rel="stylesheet" />);
 };
 
 export default class Frame extends Component {
@@ -26,13 +24,20 @@ export default class Frame extends Component {
   }
 
   render() {
-    const { children, width, parentWidth, scrolling, background, frameStyles } = this.props;
-    const { catalog: { page: { styles } } } = this.context;
+    const {
+      children,
+      width,
+      parentWidth,
+      scrolling,
+      background,
+      frameStyles = []
+    } = this.props;
+    // const { catalog: { page: { styles } } } = this.context;
     const height = this.state.height || this.props.height;
     const autoHeight = !this.props.height;
     const scale = Math.min(1, parentWidth / width);
     const scaledHeight = autoHeight ? height : height * scale;
-    const allStyles = Array.prototype.concat(styles, frameStyles);
+    // const allStyles = Array.prototype.concat(styles, frameStyles);
 
     return (
       <div
@@ -57,12 +62,7 @@ export default class Frame extends Component {
               background: background,
               overflow: scrolling ? "auto" : "hidden"
             }}
-            head={[
-              <style key="stylereset">
-                {"html,body{margin:0;padding:0;}"}
-              </style>,
-              ...renderStyles(allStyles)
-            ]}
+            head={[...renderStyles(frameStyles)]}
             onRender={
               autoHeight
                 ? content => {
