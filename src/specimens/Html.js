@@ -28,23 +28,18 @@ function getStyle(theme) {
     },
     toggle: {
       border: PADDING + "px solid transparent",
-      color: theme.lightColor,
+      color: theme.codeColor,
       cursor: "pointer",
       display: "inline-block",
       fontFamily: theme.fontMono,
       fontSize: "16px",
       fontStyle: "normal",
-      fontWeight: 700,
-      height: SIZE + "px",
-      lineHeight: SIZE + "px",
-      padding: PADDING + "px",
+      height: "24px",
       position: "absolute",
       right: -PADDING + "px",
-      top: -(SIZE + 2 * PADDING) + "px",
+      top: -(SIZE + 3 * PADDING) + "px",
       userSelect: "none",
-      ":hover": {
-        color: theme.textColor
-      }
+      ":hover": { color: theme.linkColor }
     },
     source: {
       borderTop: "1px solid #eee",
@@ -61,24 +56,11 @@ function getStyle(theme) {
       width: "100%",
       height: "100%"
     },
-    light: {
-      background: `url(${theme.checkerboardPatternLight})`
-    },
-    dark: {
-      background: `url(${theme.checkerboardPatternDark})`
-    },
-    plain: {
-      background: "transparent",
-      padding: 0
-    },
-    plain_light: {
-      background: theme.bgLight,
-      padding: "20px"
-    },
-    plain_dark: {
-      background: theme.bgDark,
-      padding: "20px"
-    },
+    light: { background: `url(${theme.checkerboardPatternLight})` },
+    dark: { background: `url(${theme.checkerboardPatternDark})` },
+    plain: { background: "transparent", padding: 0 },
+    plain_light: { background: theme.bgLight, padding: "20px" },
+    plain_dark: { background: theme.bgDark, padding: "20px" },
     responsive: {
       boxSizing: "border-box",
       overflow: "hidden",
@@ -185,7 +167,19 @@ class Html extends React.Component {
 
     const toggle = !options.noSource ? (
       <div className={css(styles.toggle)} onClick={() => this.toggleSource()}>
-        &lt;&gt;
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          focusable="false"
+          role="presentation"
+        >
+          <path
+            d="M14.155 4.055a1 1 0 0 0-1.271.62l-4.83 14.046a1 1 0 0 0 1.891.65l4.83-14.045a1 1 0 0 0-.62-1.271m-6.138 8.21l-2.58-2.501L8.236 7.05a.999.999 0 1 0-1.392-1.436l-3.54 3.432a1 1 0 0 0 0 1.436l3.32 3.219a1 1 0 1 0 1.393-1.436m12.219 1.568l-3.32-3.22a.999.999 0 1 0-1.393 1.437l2.58 2.5-2.799 2.715a.999.999 0 1 0 1.392 1.436l3.54-3.432a1 1 0 0 0 0-1.436"
+            fill="currentColor"
+            fillRule="evenodd"
+          />
+        </svg>
       </div>
     ) : null;
 

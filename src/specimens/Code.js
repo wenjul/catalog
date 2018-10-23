@@ -6,9 +6,8 @@ import { css } from "../emotion";
 import Specimen from "../components/Specimen/Specimen";
 import mapSpecimenOption from "../utils/mapSpecimenOption";
 import HighlightedCode from "../components/HighlightedCode/HighlightedCode";
-import { relative } from "path";
-import { isAbsolute } from "upath";
-
+// import { relative } from "path";
+// import { isAbsolute } from "upath";
 
 function getStyle(theme) {
   return {

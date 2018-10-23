@@ -14,6 +14,7 @@ Add pages and page groups to your style guide.
 - `hideFromMenu: boolean`: Hide the page in the navigation (optional)
 - `imports?: Imports`: page [imports](/configuration/imports#imports) (optional)
 - `styles?: Styles`: page [styles](/configuration/imports#styles) (optional)
+- `iframeStyles?: iframeStyles`: `[]` (optional)
 - `scripts?: Scripts`: page [scripts](/configuration/imports#scripts) (optional)
 
 ```hint|directive

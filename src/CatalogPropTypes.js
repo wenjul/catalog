@@ -8,6 +8,7 @@ export const pageShape = PropTypes.shape({
   src: PropTypes.string,
   pages: PropTypes.array, // should be arrayOf(page) but that doesn't work
   styles: PropTypes.array.isRequired,
+  iframePageStyles: PropTypes.array,
   scripts: PropTypes.array.isRequired,
   imports: PropTypes.object.isRequired,
   hideFromMenu: PropTypes.boolean
@@ -26,5 +27,6 @@ export const catalogShape = PropTypes.shape({
   pages: pagesShape.isRequired,
   pageTree: pagesShape.isRequired,
   pagePaths: PropTypes.instanceOf(Set).isRequired,
-  logoSrc: PropTypes.string
+  logoSrc: PropTypes.string,
+  iframeGlobalStyles: PropTypes.array
 });

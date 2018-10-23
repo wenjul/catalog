@@ -17,7 +17,8 @@ class CatalogContext extends Component {
       specimens,
       basePath,
       publicUrl,
-      useBrowserHistory
+      useBrowserHistory,
+      iframeGlobalStyles
     } = this.props.configuration;
     const { router } = this.context;
     return {
@@ -30,14 +31,15 @@ class CatalogContext extends Component {
         responsiveSizes,
         title,
         pages: pages.filter(p => !p.hideFromMenu),
-        pagePaths: new Set(pages.map(p => p.path)), // Used for internal link lookup
+        pagePaths: new Set(pages.map(p => p.path)),
         pageTree,
         basePath,
         publicUrl,
         logoSrc,
-        useBrowserHistory
+        useBrowserHistory,
+        iframeGlobalStyles
       }
-    };
+    }; // Used for internal link lookup
   }
 
   render() {

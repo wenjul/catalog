@@ -27,6 +27,11 @@ const pages = [
     content: markdownLoader("intro")
   },
   {
+    path: "/pagination",
+    title: "Pagination",
+    content: markdownLoader("Pagination")
+  },
+  {
     title: "Installation",
     pages: [
       {
@@ -200,6 +205,9 @@ ReactDOM.render(
       }
     }
     pages={pages}
+    iframeGlobalStyles={[
+      "https://imgcache.qq.com/open_proj/proj_qcloud_v2/bee-v2/css/bee.css"
+    ]}
   />,
   document.getElementById("catalog")
 );

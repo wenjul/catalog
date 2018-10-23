@@ -13,6 +13,7 @@ export interface ConfigPage {
   hideFromMenu?: boolean;
   imports?: { [key: string]: any };
   styles?: string[];
+  iframeGlobalStyles?: string[];
   scripts?: string[];
   content?: React.ComponentType;
 }
@@ -39,6 +40,7 @@ export interface Config {
   logoSrc?: string;
   imports?: { [key: string]: any };
   styles?: string[];
+  iframeGlobalStyles?: string[];
   scripts?: string[];
 }
 
@@ -83,7 +85,10 @@ export function configureRoutes(config: Config): any;
 export function configureJSXRoutes(config: Config): any;
 
 export function pageLoader(
-  f: string | (() => Promise<{ default: React.ComponentType }>) | (() => Promise<React.ComponentType>)
+  f:
+    | string
+    | (() => Promise<{ default: React.ComponentType }>)
+    | (() => Promise<React.ComponentType>)
 ): React.ComponentType;
 
 // Components
@@ -199,6 +204,7 @@ export interface HtmlSpecimenProps {
   light?: boolean;
   dark?: boolean;
   frame?: boolean;
+  frameStyles?: string[];
   responsive?: boolean | string | string[];
 }
 export class HtmlSpecimen extends React.Component<
