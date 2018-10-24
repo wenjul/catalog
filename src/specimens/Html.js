@@ -135,7 +135,7 @@ class Html extends React.Component {
     const {
       catalog: { theme, responsiveSizes },
       children,
-      frame,
+      frame = "true",
       frameStyles,
       ...options
     } = this.props;

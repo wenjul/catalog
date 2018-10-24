@@ -2421,7 +2421,8 @@ var Html = function (_React$Component) {
         theme = _props$catalog.theme,
         responsiveSizes = _props$catalog.responsiveSizes,
         children = _props.children,
-        frame = _props.frame,
+        _props$frame = _props.frame,
+        frame = _props$frame === undefined ? "true" : _props$frame,
         frameStyles = _props.frameStyles,
         options = objectWithoutProperties(_props, ["catalog", "children", "frame", "frameStyles"]);
     var _state = this.state,

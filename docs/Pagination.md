@@ -3,7 +3,6 @@
 用于表格底部，用于表格单页可显示列数，表格整体显示行总数，和翻页的控制，可根据业务的需求来进行选用，通常与表格一起使用。
 
 ```html
-frame: true
 frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/compatible.css']
 ---
 <div class="tc-15-page">
@@ -47,7 +46,6 @@ frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/c
 适用于对话框内的表格等翻页（大结构不变，只是在默认基础上删减不用的节点）
 
 ```html
-frame: true
 frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/compatible.css']
 ---
 <div class="tc-15-page">
@@ -78,7 +76,6 @@ frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/c
 适用于监控视图实例切换等
 
 ```html
-frame: true
 frameStyles: ['https://imgcache.qq.com/open_proj/proj_qcloud_v2/bee-v2/css/bee.css']
 ---
 <div class="pagination">
