@@ -638,11 +638,8 @@ function getStyle$1(theme) {
       userSelect: "none",
       background: "#eee"
     },
-    copyCode: {
-      position: "absolute",
-      top: 20,
-      right: 20
-    }
+    copyCode: { position: "absolute", top: 20, right: 20, cursor: "pointer" },
+    copyIcon: { fill: "#818a91", ":hover": { fill: theme.brandColor } }
   };
 }
 
@@ -656,7 +653,7 @@ var Code = function (_React$Component) {
 
     _this.state = {
       viewSource: props.collapsed ? false : true,
-      copySourceValue: "sssssss",
+      copySourceValue: "",
       copied: false
     };
     return _this;
@@ -675,6 +672,8 @@ var Code = function (_React$Component) {
     var viewSource = this.state.viewSource;
 
     var styles = getStyle$1(theme);
+
+    // console.log(rawBody);
 
     var toggle = collapsed ? React__default.createElement(
       "div",
@@ -704,15 +703,24 @@ var Code = function (_React$Component) {
         React__default.createElement(
           reactCopyToClipboard.CopyToClipboard,
           {
-            text: this.state.copySourceValue,
+            text: raw ? rawBody : children,
             onCopy: function onCopy() {
-              return _this2.setState({ copied: true });
+              return _this2.setState({
+                copied: true
+              });
             }
           },
           React__default.createElement(
-            "span",
-            null,
-            "Copy"
+            "svg",
+            {
+              xmlns: "http://www.w3.org/2000/svg",
+              width: "16",
+              height: "16",
+              viewBox: "0 0 24 24",
+              className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyIcon, "label:Code;", "label:className;")
+            },
+            React__default.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }),
+            React__default.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" })
           )
         )
       )
@@ -2324,7 +2332,7 @@ function getStyle$4(theme) {
     },
     toggle: {
       border: PADDING + "px solid transparent",
-      color: theme.codeColor,
+      color: "#888888",
       cursor: "pointer",
       display: "inline-block",
       fontFamily: theme.fontMono,
@@ -2335,13 +2343,14 @@ function getStyle$4(theme) {
       right: -PADDING + "px",
       top: -(SIZE + 3 * PADDING) + "px",
       userSelect: "none",
-      ":hover": { color: theme.linkColor }
+      ":hover": { color: theme.brandColor }
     },
     source: {
       borderTop: "1px solid #eee",
       boxSizing: "border-box",
       width: "100%",
-      height: "auto"
+      height: "auto",
+      position: "relative"
     },
     content: {
       background: "url(" + theme.checkerboardPatternLight + ")",
@@ -2362,7 +2371,15 @@ function getStyle$4(theme) {
       overflow: "hidden",
       padding: "15px",
       textAlign: "center"
-    }
+    },
+    copyCode: {
+      position: "absolute",
+      top: 20,
+      right: 20,
+      cursor: "pointer",
+      color: theme.textColor
+    },
+    copyIcon: { fill: "#888888", ":hover": { fill: theme.brandColor } }
   };
 }
 
@@ -2377,7 +2394,8 @@ var Html = function (_React$Component) {
     _this.state = {
       viewSource: !!props.showSource,
       parentWidth: 0,
-      activeScreenSize: validateSizes(props.responsive, props.catalog.responsiveSizes)[0] || null
+      activeScreenSize: validateSizes(props.responsive, props.catalog.responsiveSizes)[0] || null,
+      copied: false
     };
     _this.setSize = _this.setSize.bind(_this);
     _this.updateParentWidth = _this.updateParentWidth.bind(_this);
@@ -2465,7 +2483,34 @@ var Html = function (_React$Component) {
     var source = viewSource ? React__default.createElement(
       "div",
       { className: /*#__PURE__*/ /*#__PURE__*/css(styles.source, "label:source;", "label:className;") },
-      React__default.createElement(HighlightedCode, { language: "markup", code: children, theme: theme })
+      React__default.createElement(HighlightedCode, { language: "markup", code: children, theme: theme }),
+      React__default.createElement(
+        "div",
+        { className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyCode, "label:source;", "label:className;") },
+        React__default.createElement(
+          reactCopyToClipboard.CopyToClipboard,
+          {
+            text: children,
+            onCopy: function onCopy() {
+              return _this2.setState({
+                copied: true
+              });
+            }
+          },
+          React__default.createElement(
+            "svg",
+            {
+              xmlns: "http://www.w3.org/2000/svg",
+              width: "16",
+              height: "16",
+              viewBox: "0 0 24 24",
+              className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyIcon, "label:source;", "label:className;")
+            },
+            React__default.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }),
+            React__default.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" })
+          )
+        )
+      )
     ) : null;
 
     var toggle = !options.noSource ? React__default.createElement(
@@ -2475,13 +2520,7 @@ var Html = function (_React$Component) {
         } },
       React__default.createElement(
         "svg",
-        {
-          width: "24",
-          height: "24",
-          viewBox: "0 0 24 24",
-          focusable: "false",
-          role: "presentation"
-        },
+        { width: "20", height: "20", viewBox: "0 0 24 24", focusable: "false" },
         React__default.createElement("path", {
           d: "M14.155 4.055a1 1 0 0 0-1.271.62l-4.83 14.046a1 1 0 0 0 1.891.65l4.83-14.045a1 1 0 0 0-.62-1.271m-6.138 8.21l-2.58-2.501L8.236 7.05a.999.999 0 1 0-1.392-1.436l-3.54 3.432a1 1 0 0 0 0 1.436l3.32 3.219a1 1 0 1 0 1.393-1.436m12.219 1.568l-3.32-3.22a.999.999 0 1 0-1.393 1.437l2.58 2.5-2.799 2.715a.999.999 0 1 0 1.392 1.436l3.54-3.432a1 1 0 0 0 0-1.436",
           fill: "currentColor",

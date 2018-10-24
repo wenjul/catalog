@@ -9,6 +9,7 @@ import HighlightedCode from "../components/HighlightedCode/HighlightedCode";
 import ResponsiveTabs from "../components/ResponsiveTabs/ResponsiveTabs";
 import runscript from "../utils/runscript";
 import validateSizes from "../utils/validateSizes";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const PADDING = 3;
 const SIZE = 20;
@@ -28,7 +29,7 @@ function getStyle(theme) {
     },
     toggle: {
       border: PADDING + "px solid transparent",
-      color: theme.codeColor,
+      color: "#888888",
       cursor: "pointer",
       display: "inline-block",
       fontFamily: theme.fontMono,
@@ -39,13 +40,14 @@ function getStyle(theme) {
       right: -PADDING + "px",
       top: -(SIZE + 3 * PADDING) + "px",
       userSelect: "none",
-      ":hover": { color: theme.linkColor }
+      ":hover": { color: theme.brandColor }
     },
     source: {
       borderTop: "1px solid #eee",
       boxSizing: "border-box",
       width: "100%",
-      height: "auto"
+      height: "auto",
+      position: "relative"
     },
     content: {
       background: `url(${theme.checkerboardPatternLight})`,
@@ -66,7 +68,15 @@ function getStyle(theme) {
       overflow: "hidden",
       padding: "15px",
       textAlign: "center"
-    }
+    },
+    copyCode: {
+      position: "absolute",
+      top: 20,
+      right: 20,
+      cursor: "pointer",
+      color: theme.textColor
+    },
+    copyIcon: { fill: "#888888", ":hover": { fill: theme.brandColor } }
   };
 }
 
@@ -78,7 +88,8 @@ class Html extends React.Component {
       parentWidth: 0,
       activeScreenSize:
         validateSizes(props.responsive, props.catalog.responsiveSizes)[0] ||
-        null
+        null,
+      copied: false
     };
     this.setSize = this.setSize.bind(this);
     this.updateParentWidth = this.updateParentWidth.bind(this);
@@ -162,18 +173,33 @@ class Html extends React.Component {
     const source = viewSource ? (
       <div className={css(styles.source)}>
         <HighlightedCode language="markup" code={children} theme={theme} />
+        <div className={css(styles.copyCode)}>
+          <CopyToClipboard
+            text={children}
+            onCopy={() =>
+              this.setState({
+                copied: true
+              })
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              className={css(styles.copyIcon)}
+            >
+              <path fill="none" d="M0 0h24v24H0V0z" />
+              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" />
+            </svg>
+          </CopyToClipboard>
+        </div>
       </div>
     ) : null;
 
     const toggle = !options.noSource ? (
       <div className={css(styles.toggle)} onClick={() => this.toggleSource()}>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          focusable="false"
-          role="presentation"
-        >
+        <svg width="20" height="20" viewBox="0 0 24 24" focusable="false">
           <path
             d="M14.155 4.055a1 1 0 0 0-1.271.62l-4.83 14.046a1 1 0 0 0 1.891.65l4.83-14.045a1 1 0 0 0-.62-1.271m-6.138 8.21l-2.58-2.501L8.236 7.05a.999.999 0 1 0-1.392-1.436l-3.54 3.432a1 1 0 0 0 0 1.436l3.32 3.219a1 1 0 1 0 1.393-1.436m12.219 1.568l-3.32-3.22a.999.999 0 1 0-1.393 1.437l2.58 2.5-2.799 2.715a.999.999 0 1 0 1.392 1.436l3.54-3.432a1 1 0 0 0 0-1.436"
             fill="currentColor"

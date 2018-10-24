@@ -33,11 +33,8 @@ function getStyle(theme) {
       userSelect: "none",
       background: "#eee"
     },
-    copyCode: {
-      position: "absolute",
-      top: 20,
-      right: 20
-    }
+    copyCode: { position: "absolute", top: 20, right: 20, cursor: "pointer" },
+    copyIcon: { fill: "#818a91", ":hover": { fill: theme.brandColor } }
   };
 }
 
@@ -46,7 +43,7 @@ class Code extends React.Component {
     super(props);
     this.state = {
       viewSource: props.collapsed ? false : true,
-      copySourceValue: "sssssss",
+      copySourceValue: "",
       copied: false
     };
   }
@@ -62,6 +59,8 @@ class Code extends React.Component {
     } = this.props;
     const { viewSource } = this.state;
     const styles = getStyle(theme);
+
+    // console.log(rawBody);
 
     const toggle = collapsed ? (
       <div
@@ -86,10 +85,23 @@ class Code extends React.Component {
         {content}
         <div className={css(styles.copyCode)}>
           <CopyToClipboard
-            text={this.state.copySourceValue}
-            onCopy={() => this.setState({ copied: true })}
+            text={raw ? rawBody : children}
+            onCopy={() =>
+              this.setState({
+                copied: true
+              })
+            }
           >
-            <span>Copy</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              className={css(styles.copyIcon)}
+            >
+              <path fill="none" d="M0 0h24v24H0V0z" />
+              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" />
+            </svg>
           </CopyToClipboard>
         </div>
       </section>
