@@ -7,6 +7,7 @@ import { safeLoad, CORE_SCHEMA, Type, Schema } from 'js-yaml';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-markdown';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { hcl } from 'd3-color';
 import ReactDOM, { unstable_renderSubtreeIntoContainer, unmountComponentAtNode } from 'react-dom';
 import raf from 'raf';
@@ -646,7 +647,9 @@ var Code = function (_React$Component) {
     var _this = possibleConstructorReturn(this, _React$Component.call(this, props));
 
     _this.state = {
-      viewSource: props.collapsed ? false : true
+      viewSource: props.collapsed ? false : true,
+      copySourceValue: "sssssss",
+      copied: false
     };
     return _this;
   }
@@ -690,7 +693,20 @@ var Code = function (_React$Component) {
       React.createElement(
         "div",
         { className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyCode, "label:Code;", "label:className;") },
-        "copy"
+        React.createElement(
+          CopyToClipboard,
+          {
+            text: this.state.copySourceValue,
+            onCopy: function onCopy() {
+              return _this2.setState({ copied: true });
+            }
+          },
+          React.createElement(
+            "span",
+            null,
+            "Copy"
+          )
+        )
       )
     );
   };
@@ -4721,22 +4737,6 @@ var Menu = function (_React$Component) {
           }).map(function (page) {
             return React.createElement(ListItem$1, { key: page.id, page: page, theme: theme });
           })
-        )
-      ),
-      React.createElement(
-        "div",
-        { className: /*#__PURE__*/ /*#__PURE__*/css(currentStyle.info, "label:Menu;", "label:className;") },
-        "Powered by",
-        " ",
-        React.createElement(
-          "a",
-          {
-            className: /*#__PURE__*/ /*#__PURE__*/css(currentStyle.link, "label:Menu;", "label:className;"),
-            href: "https://www.catalog.style/",
-            target: "_blank",
-            rel: "noopener noreferrer"
-          },
-          "Catalog"
         )
       )
     );

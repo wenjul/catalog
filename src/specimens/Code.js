@@ -6,6 +6,7 @@ import { css } from "../emotion";
 import Specimen from "../components/Specimen/Specimen";
 import mapSpecimenOption from "../utils/mapSpecimenOption";
 import HighlightedCode from "../components/HighlightedCode/HighlightedCode";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 // import { relative } from "path";
 // import { isAbsolute } from "upath";
 
@@ -44,7 +45,9 @@ class Code extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      viewSource: props.collapsed ? false : true
+      viewSource: props.collapsed ? false : true,
+      copySourceValue: "sssssss",
+      copied: false
     };
   }
 
@@ -81,7 +84,14 @@ class Code extends React.Component {
       <section className={css(styles.container)}>
         {toggle}
         {content}
-        <div className={css(styles.copyCode)}>copy</div>
+        <div className={css(styles.copyCode)}>
+          <CopyToClipboard
+            text={this.state.copySourceValue}
+            onCopy={() => this.setState({ copied: true })}
+          >
+            <span>Copy</span>
+          </CopyToClipboard>
+        </div>
       </section>
     );
   }

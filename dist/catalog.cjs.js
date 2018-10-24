@@ -14,6 +14,7 @@ var jsYaml = require('js-yaml');
 var Prism = _interopDefault(require('prismjs'));
 require('prismjs/components/prism-jsx');
 require('prismjs/components/prism-markdown');
+var reactCopyToClipboard = require('react-copy-to-clipboard');
 var d3Color = require('d3-color');
 var ReactDOM = require('react-dom');
 var ReactDOM__default = _interopDefault(ReactDOM);
@@ -654,7 +655,9 @@ var Code = function (_React$Component) {
     var _this = possibleConstructorReturn(this, _React$Component.call(this, props));
 
     _this.state = {
-      viewSource: props.collapsed ? false : true
+      viewSource: props.collapsed ? false : true,
+      copySourceValue: "sssssss",
+      copied: false
     };
     return _this;
   }
@@ -698,7 +701,20 @@ var Code = function (_React$Component) {
       React__default.createElement(
         "div",
         { className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyCode, "label:Code;", "label:className;") },
-        "copy"
+        React__default.createElement(
+          reactCopyToClipboard.CopyToClipboard,
+          {
+            text: this.state.copySourceValue,
+            onCopy: function onCopy() {
+              return _this2.setState({ copied: true });
+            }
+          },
+          React__default.createElement(
+            "span",
+            null,
+            "Copy"
+          )
+        )
       )
     );
   };
@@ -4729,22 +4745,6 @@ var Menu = function (_React$Component) {
           }).map(function (page) {
             return React__default.createElement(ListItem$1, { key: page.id, page: page, theme: theme });
           })
-        )
-      ),
-      React__default.createElement(
-        "div",
-        { className: /*#__PURE__*/ /*#__PURE__*/css(currentStyle.info, "label:Menu;", "label:className;") },
-        "Powered by",
-        " ",
-        React__default.createElement(
-          "a",
-          {
-            className: /*#__PURE__*/ /*#__PURE__*/css(currentStyle.link, "label:Menu;", "label:className;"),
-            href: "https://www.catalog.style/",
-            target: "_blank",
-            rel: "noopener noreferrer"
-          },
-          "Catalog"
         )
       )
     );

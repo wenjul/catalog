@@ -103,23 +103,10 @@ class Menu extends React.Component {
             </h1>
           </Link>
           <ul className={css(currentStyle.list)}>
-            {pageTree
-              .filter(page => !page.hideFromMenu)
-              .map(page => (
-                <ListItem key={page.id} page={page} theme={theme} />
-              ))}
+            {pageTree.filter(page => !page.hideFromMenu).map(page => (
+              <ListItem key={page.id} page={page} theme={theme} />
+            ))}
           </ul>
-        </div>
-        <div className={css(currentStyle.info)}>
-          Powered by{" "}
-          <a
-            className={css(currentStyle.link)}
-            href="https://www.catalog.style/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Catalog
-          </a>
         </div>
       </div>
     );
