@@ -7,6 +7,8 @@ import Specimen from "../components/Specimen/Specimen";
 import mapSpecimenOption from "../utils/mapSpecimenOption";
 import HighlightedCode from "../components/HighlightedCode/HighlightedCode";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import Tooltip from "@material-ui/core/Tooltip";
+
 // import { relative } from "path";
 // import { isAbsolute } from "upath";
 
@@ -43,9 +45,19 @@ class Code extends React.Component {
     super(props);
     this.state = {
       viewSource: props.collapsed ? false : true,
-      copySourceValue: "",
-      copied: false
+      copied: false,
+      tooltipOpen: false
     };
+    this.handleTooltipClose = this.handleTooltipClose.bind(this);
+    this.handleTooltipOpen = this.handleTooltipOpen.bind(this);
+  }
+
+  handleTooltipClose() {
+    this.setState({ tooltipOpen: false, copied: false });
+  }
+
+  handleTooltipOpen() {
+    this.setState({ tooltipOpen: true });
   }
 
   render() {
@@ -92,16 +104,24 @@ class Code extends React.Component {
               })
             }
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              className={css(styles.copyIcon)}
+            <Tooltip
+              placement="top"
+              title={!this.state.copied ? "Copy" : "Copied"}
+              onClose={this.handleTooltipClose}
+              onOpen={this.handleTooltipOpen}
+              open={this.state.tooltipOpen}
             >
-              <path fill="none" d="M0 0h24v24H0V0z" />
-              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                className={css(styles.copyIcon)}
+              >
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" />
+              </svg>
+            </Tooltip>
           </CopyToClipboard>
         </div>
       </section>

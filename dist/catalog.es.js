@@ -8,6 +8,7 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-markdown';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Tooltip from '@material-ui/core/Tooltip';
 import { hcl } from 'd3-color';
 import ReactDOM, { unstable_renderSubtreeIntoContainer, unmountComponentAtNode } from 'react-dom';
 import raf from 'raf';
@@ -645,11 +646,21 @@ var Code = function (_React$Component) {
 
     _this.state = {
       viewSource: props.collapsed ? false : true,
-      copySourceValue: "",
-      copied: false
+      copied: false,
+      tooltipOpen: false
     };
+    _this.handleTooltipClose = _this.handleTooltipClose.bind(_this);
+    _this.handleTooltipOpen = _this.handleTooltipOpen.bind(_this);
     return _this;
   }
+
+  Code.prototype.handleTooltipClose = function handleTooltipClose() {
+    this.setState({ tooltipOpen: false, copied: false });
+  };
+
+  Code.prototype.handleTooltipOpen = function handleTooltipOpen() {
+    this.setState({ tooltipOpen: true });
+  };
 
   Code.prototype.render = function render() {
     var _this2 = this;
@@ -703,16 +714,26 @@ var Code = function (_React$Component) {
             }
           },
           React.createElement(
-            "svg",
+            Tooltip,
             {
-              xmlns: "http://www.w3.org/2000/svg",
-              width: "16",
-              height: "16",
-              viewBox: "0 0 24 24",
-              className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyIcon, "label:Code;", "label:className;")
+              placement: "top",
+              title: !this.state.copied ? "Copy" : "Copied",
+              onClose: this.handleTooltipClose,
+              onOpen: this.handleTooltipOpen,
+              open: this.state.tooltipOpen
             },
-            React.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }),
-            React.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" })
+            React.createElement(
+              "svg",
+              {
+                xmlns: "http://www.w3.org/2000/svg",
+                width: "16",
+                height: "16",
+                viewBox: "0 0 24 24",
+                className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyIcon, "label:Code;", "label:className;")
+              },
+              React.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }),
+              React.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" })
+            )
           )
         )
       )
@@ -2387,12 +2408,23 @@ var Html = function (_React$Component) {
       viewSource: !!props.showSource,
       parentWidth: 0,
       activeScreenSize: validateSizes(props.responsive, props.catalog.responsiveSizes)[0] || null,
-      copied: false
+      copied: false,
+      tooltipOpen: false
     };
     _this.setSize = _this.setSize.bind(_this);
     _this.updateParentWidth = _this.updateParentWidth.bind(_this);
+    _this.handleTooltipClose = _this.handleTooltipClose.bind(_this);
+    _this.handleTooltipOpen = _this.handleTooltipOpen.bind(_this);
     return _this;
   }
+
+  Html.prototype.handleTooltipClose = function handleTooltipClose() {
+    this.setState({ tooltipOpen: false, copied: false });
+  };
+
+  Html.prototype.handleTooltipOpen = function handleTooltipOpen() {
+    this.setState({ tooltipOpen: true });
+  };
 
   Html.prototype.componentDidMount = function componentDidMount() {
     var runScript = this.props.runScript;
@@ -2490,16 +2522,26 @@ var Html = function (_React$Component) {
             }
           },
           React.createElement(
-            "svg",
+            Tooltip,
             {
-              xmlns: "http://www.w3.org/2000/svg",
-              width: "16",
-              height: "16",
-              viewBox: "0 0 24 24",
-              className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyIcon, "label:source;", "label:className;")
+              placement: "top",
+              title: !this.state.copied ? "Copy" : "Copied",
+              onClose: this.handleTooltipClose,
+              onOpen: this.handleTooltipOpen,
+              open: this.state.tooltipOpen
             },
-            React.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }),
-            React.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" })
+            React.createElement(
+              "svg",
+              {
+                xmlns: "http://www.w3.org/2000/svg",
+                width: "16",
+                height: "16",
+                viewBox: "0 0 24 24",
+                className: /*#__PURE__*/ /*#__PURE__*/css(styles.copyIcon, "label:source;", "label:className;")
+              },
+              React.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }),
+              React.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z" })
+            )
           )
         )
       )
@@ -2511,13 +2553,20 @@ var Html = function (_React$Component) {
           return _this2.toggleSource();
         } },
       React.createElement(
-        "svg",
-        { width: "20", height: "20", viewBox: "0 0 24 24", focusable: "false" },
-        React.createElement("path", {
-          d: "M14.155 4.055a1 1 0 0 0-1.271.62l-4.83 14.046a1 1 0 0 0 1.891.65l4.83-14.045a1 1 0 0 0-.62-1.271m-6.138 8.21l-2.58-2.501L8.236 7.05a.999.999 0 1 0-1.392-1.436l-3.54 3.432a1 1 0 0 0 0 1.436l3.32 3.219a1 1 0 1 0 1.393-1.436m12.219 1.568l-3.32-3.22a.999.999 0 1 0-1.393 1.437l2.58 2.5-2.799 2.715a.999.999 0 1 0 1.392 1.436l3.54-3.432a1 1 0 0 0 0-1.436",
-          fill: "currentColor",
-          fillRule: "evenodd"
-        })
+        Tooltip,
+        {
+          title: this.state.viewSource ? "Hide Code" : "Show Code",
+          placement: "top"
+        },
+        React.createElement(
+          "svg",
+          { width: "20", height: "20", viewBox: "0 0 24 24", focusable: "false" },
+          React.createElement("path", {
+            d: "M14.155 4.055a1 1 0 0 0-1.271.62l-4.83 14.046a1 1 0 0 0 1.891.65l4.83-14.045a1 1 0 0 0-.62-1.271m-6.138 8.21l-2.58-2.501L8.236 7.05a.999.999 0 1 0-1.392-1.436l-3.54 3.432a1 1 0 0 0 0 1.436l3.32 3.219a1 1 0 1 0 1.393-1.436m12.219 1.568l-3.32-3.22a.999.999 0 1 0-1.393 1.437l2.58 2.5-2.799 2.715a.999.999 0 1 0 1.392 1.436l3.54-3.432a1 1 0 0 0 0-1.436",
+            fill: "currentColor",
+            fillRule: "evenodd"
+          })
+        )
       )
     ) : null;
 
