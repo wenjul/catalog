@@ -6,7 +6,7 @@ import { css } from "../../emotion";
 
 const frameStyle = {
   width: "100%",
-  height: "100%",
+  // height: "100%",
   lineHeight: 0,
   margin: 0,
   padding: 0,
@@ -74,16 +74,6 @@ export default class Frame extends Component {
               overflow: scrolling ? "auto" : "hidden"
             }}
             head={[...renderStyles(allIframeStyles)]}
-            onRender={
-              autoHeight
-                ? content => {
-                    const contentHeight = content.offsetHeight;
-                    if (contentHeight !== height) {
-                      this.setState({ height: contentHeight });
-                    }
-                  }
-                : () => null
-            }
           >
             {children}
           </FrameComponent>
@@ -92,6 +82,17 @@ export default class Frame extends Component {
     );
   }
 }
+
+// onRender = {
+//   autoHeight
+//     ? content => {
+//       const contentHeight = content.offsetHeight;
+//       if (contentHeight !== height) {
+//         this.setState({ height: contentHeight });
+//       }
+//     }
+//                 : () => null
+//             }
 
 Frame.propTypes = {
   children: PropTypes.element,

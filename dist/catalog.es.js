@@ -1042,12 +1042,37 @@ var FrameComponent = function (_Component) {
 
     var _this = possibleConstructorReturn(this, _Component.call(this));
 
+    _this.state = {
+      iframeContentHeight: 0
+    };
     _this.renderFrameContents = _this.renderFrameContents.bind(_this);
     return _this;
   }
 
   FrameComponent.prototype.componentDidMount = function componentDidMount() {
+    var _this2 = this;
+
     this.renderFrameContents();
+
+    this.iframe.onload = function () {
+      setTimeout(function () {
+        var doc = _this2.iframe.contentDocument;
+        var docFirstChild = doc.body.firstChild;
+
+        // 需要进一步验证，子元素是否生成
+        if (docFirstChild) {
+          var docHeight = doc.documentElement.scrollHeight;
+
+          // console.log(docHeight);
+
+          if (docHeight != _this2.state.iframeContentHeight) {
+            _this2.setState({
+              iframeContentHeight: docHeight
+            });
+          }
+        }
+      }, 400);
+    };
   };
 
   FrameComponent.prototype.componentDidUpdate = function componentDidUpdate() {
@@ -1062,7 +1087,7 @@ var FrameComponent = function (_Component) {
   };
 
   FrameComponent.prototype.renderFrameContents = function renderFrameContents() {
-    var _this2 = this;
+    var _this3 = this;
 
     if (!this.iframe) {
       return;
@@ -1080,7 +1105,7 @@ var FrameComponent = function (_Component) {
 
       // React warns when you render directly into the body since browser
       // extensions also inject into the body and can mess up React.
-      doc.body.innerHTML = "<div></div>";
+      doc.body.innerHTML = "<div class='contentWrap'></div>";
       doc.head.innerHTML = "";
 
       var base = doc.createElement("base");
@@ -1096,9 +1121,9 @@ var FrameComponent = function (_Component) {
 
       swallowInvalidHeadWarning();
       unstable_renderSubtreeIntoContainer(this, contents, doc.body.firstChild, function () {
-        if (_this2.props.onRender) {
+        if (_this3.props.onRender) {
           raf(function () {
-            _this2.props.onRender(doc.body.firstChild);
+            _this3.props.onRender(doc.body.firstChild);
           });
         }
       });
@@ -1109,15 +1134,16 @@ var FrameComponent = function (_Component) {
   };
 
   FrameComponent.prototype.render = function render() {
-    var _this3 = this;
+    var _this4 = this;
 
     var style = this.props.style;
 
     return React.createElement("iframe", {
       ref: function ref(el) {
-        _this3.iframe = el;
+        _this4.iframe = el;
       },
-      className: /*#__PURE__*/ /*#__PURE__*/css(style, "label:FrameComponent;", "label:className;")
+      className: /*#__PURE__*/ /*#__PURE__*/css(style, "label:FrameComponent;", "label:className;"),
+      height: this.state.iframeContentHeight
     });
   };
 
@@ -1133,7 +1159,7 @@ FrameComponent.propTypes = {
 
 var frameStyle = {
   width: "100%",
-  height: "100%",
+  // height: "100%",
   lineHeight: 0,
   margin: 0,
   padding: 0,
@@ -1159,8 +1185,6 @@ var Frame = function (_Component) {
   }
 
   Frame.prototype.render = function render() {
-    var _this2 = this;
-
     var _props = this.props,
         children = _props.children,
         width = _props.width,
@@ -1209,15 +1233,7 @@ var Frame = function (_Component) {
               background: background,
               overflow: scrolling ? "auto" : "hidden"
             }),
-            head: [].concat(renderStyles(allIframeStyles)),
-            onRender: autoHeight ? function (content) {
-              var contentHeight = content.offsetHeight;
-              if (contentHeight !== height) {
-                _this2.setState({ height: contentHeight });
-              }
-            } : function () {
-              return null;
-            }
+            head: [].concat(renderStyles(allIframeStyles))
           },
           children
         )
@@ -1227,8 +1243,6 @@ var Frame = function (_Component) {
 
   return Frame;
 }(Component);
-
-
 Frame.propTypes = {
   children: PropTypes.element,
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

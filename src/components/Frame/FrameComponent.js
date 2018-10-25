@@ -39,11 +39,34 @@ if (hasConsole) {
 class FrameComponent extends Component {
   constructor() {
     super();
+    this.state = {
+      iframeContentHeight: 0
+    };
     this.renderFrameContents = this.renderFrameContents.bind(this);
   }
 
   componentDidMount() {
     this.renderFrameContents();
+
+    this.iframe.onload = () => {
+      setTimeout(() => {
+        const doc = this.iframe.contentDocument;
+        const docFirstChild = doc.body.firstChild;
+
+        // 需要进一步验证，子元素是否生成
+        if (docFirstChild) {
+          const docHeight = doc.documentElement.scrollHeight;
+
+          // console.log(docHeight);
+
+          if (docHeight != this.state.iframeContentHeight) {
+            this.setState({
+              iframeContentHeight: docHeight
+            });
+          }
+        }
+      }, 400);
+    };
   }
 
   componentDidUpdate() {
@@ -74,7 +97,7 @@ class FrameComponent extends Component {
 
       // React warns when you render directly into the body since browser
       // extensions also inject into the body and can mess up React.
-      doc.body.innerHTML = "<div></div>";
+      doc.body.innerHTML = "<div class='contentWrap'></div>";
       doc.head.innerHTML = "";
 
       const base = doc.createElement("base");
@@ -112,6 +135,7 @@ class FrameComponent extends Component {
           this.iframe = el;
         }}
         className={css(style)}
+        height={this.state.iframeContentHeight}
       />
     );
   }
