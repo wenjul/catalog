@@ -2,7 +2,7 @@ import React from "react";
 import { catalogShape } from "../CatalogPropTypes";
 import PropTypes from "prop-types";
 import { css } from "../emotion";
-import Frame from "../components/Frame/Frame";
+import Frame from "../components/FrameResizer/frameResizer";
 import Hint from "../specimens/Hint";
 import Specimen from "../components/Specimen/Specimen";
 import HighlightedCode from "../components/HighlightedCode/HighlightedCode";
@@ -160,6 +160,7 @@ class Html extends React.Component {
       children,
       frame = "true",
       frameStyles,
+      frameScripts,
       ...options
     } = this.props;
     const { activeScreenSize, parentWidth, viewSource } = this.state;
@@ -280,6 +281,7 @@ class Html extends React.Component {
                 scrolling={frame ? false : true}
                 background={frameBackground}
                 frameStyles={frameStyles}
+                frameScripts={frameScripts}
               >
                 {content}
               </Frame>
@@ -309,7 +311,8 @@ Html.propTypes = {
   noSource: PropTypes.bool,
   showSource: PropTypes.bool,
   frame: PropTypes.bool,
-  frameStyles: PropTypes.array
+  frameStyles: PropTypes.array,
+  frameScripts: PropTypes.array
 };
 
 export default Specimen(undefined, undefined, { withChildren: true })(Html);

@@ -13,8 +13,9 @@ export interface ConfigPage {
   hideFromMenu?: boolean;
   imports?: { [key: string]: any };
   styles?: string[];
-  iframeGlobalStyles?: string[];
+  iframePageStyles?: string[];
   scripts?: string[];
+  iframePageScripts?: string[];
   content?: React.ComponentType;
 }
 
@@ -42,6 +43,7 @@ export interface Config {
   styles?: string[];
   iframeGlobalStyles?: string[];
   scripts?: string[];
+  iframeGlobalScripts?: string[];
 }
 
 export interface Theme {
@@ -205,6 +207,7 @@ export interface HtmlSpecimenProps {
   dark?: boolean;
   frame?: boolean;
   frameStyles?: string[];
+  frameScripts?: string[];
   responsive?: boolean | string | string[];
 }
 export class HtmlSpecimen extends React.Component<

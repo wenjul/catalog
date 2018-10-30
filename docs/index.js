@@ -208,6 +208,9 @@ ReactDOM.render(
     iframeGlobalStyles={[
       "https://imgcache.qq.com/open_proj/proj_qcloud_v2/bee-v2/css/bee.css"
     ]}
+    iframeGlobalScripts={[
+      "https://cdn.bootcss.com/lodash.js/4.17.11/lodash.min.js"
+    ]}
   />,
   document.getElementById("catalog")
 );

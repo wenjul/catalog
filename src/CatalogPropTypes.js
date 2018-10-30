@@ -10,6 +10,7 @@ export const pageShape = PropTypes.shape({
   styles: PropTypes.array.isRequired,
   iframePageStyles: PropTypes.array,
   scripts: PropTypes.array.isRequired,
+  iframePageScripts: PropTypes.array,
   imports: PropTypes.object.isRequired,
   hideFromMenu: PropTypes.boolean
 });
@@ -28,5 +29,6 @@ export const catalogShape = PropTypes.shape({
   pageTree: pagesShape.isRequired,
   pagePaths: PropTypes.instanceOf(Set).isRequired,
   logoSrc: PropTypes.string,
-  iframeGlobalStyles: PropTypes.array
+  iframeGlobalStyles: PropTypes.array,
+  iframeGlobalScripts: PropTypes.array
 });

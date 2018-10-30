@@ -18,7 +18,8 @@ class CatalogContext extends Component {
       basePath,
       publicUrl,
       useBrowserHistory,
-      iframeGlobalStyles
+      iframeGlobalStyles,
+      iframeGlobalScripts
     } = this.props.configuration;
     const { router } = this.context;
     return {
@@ -37,7 +38,8 @@ class CatalogContext extends Component {
         publicUrl,
         logoSrc,
         useBrowserHistory,
-        iframeGlobalStyles
+        iframeGlobalStyles,
+        iframeGlobalScripts
       }
     }; // Used for internal link lookup
   }

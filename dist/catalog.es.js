@@ -11,11 +11,12 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Tooltip from '@material-ui/core/Tooltip';
 import { hcl } from 'd3-color';
 import ReactDOM, { unstable_renderSubtreeIntoContainer, unmountComponentAtNode } from 'react-dom';
-import raf from 'raf';
+import { iframeResizer } from 'iframe-resizer';
 import marked from 'marked';
 import { Link, Route, Router, applyRouterMiddleware, browserHistory, hashHistory } from 'react-router';
 import Slugger from 'github-slugger';
 import { parse, stringify } from 'srcset';
+import raf from 'raf';
 import { transform } from 'babel-standalone';
 import { parse as parse$1 } from 'url';
 import DocumentTitle from 'react-document-title';
@@ -177,6 +178,7 @@ var pageShape = PropTypes.shape({
   styles: PropTypes.array.isRequired,
   iframePageStyles: PropTypes.array,
   scripts: PropTypes.array.isRequired,
+  iframePageScripts: PropTypes.array,
   imports: PropTypes.object.isRequired,
   hideFromMenu: PropTypes.boolean
 });
@@ -195,7 +197,8 @@ var catalogShape = PropTypes.shape({
   pageTree: pagesShape.isRequired,
   pagePaths: PropTypes.instanceOf(Set).isRequired,
   logoSrc: PropTypes.string,
-  iframeGlobalStyles: PropTypes.array
+  iframeGlobalStyles: PropTypes.array,
+  iframeGlobalScripts: PropTypes.array
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -1005,255 +1008,213 @@ ColorPalette.defaultProps = {
 
 var ColorPalette$1 = Specimen()(ColorPalette);
 
-/*
+var IframeResizer = function (_React$Component) {
+  inherits(IframeResizer, _React$Component);
 
-Modified react-frame-component@0.4.0 which supports an onRender callback (e.g. to measure contents);
-Original https://github.com/ryanseddon/react-frame-component/
+  function IframeResizer(props) {
+    classCallCheck(this, IframeResizer);
 
-*/
+    var _this = possibleConstructorReturn(this, _React$Component.call(this, props));
 
-var hasConsole = typeof window !== "undefined" && window.console;
-var noop = function noop() {};
-var swallowInvalidHeadWarning = noop;
-var resetWarnings = noop;
+    _this.state = {};
 
-if (hasConsole) {
-  var originalError = console.error; // eslint-disable-line no-console
-  // Rendering a <head> into a body is technically invalid although it
-  // works. We swallow React's validateDOMNesting warning if that is the
-  // message to avoid confusion
-  swallowInvalidHeadWarning = function swallowInvalidHeadWarning() {
-    // eslint-disable-next-line no-console
-    console.error = function (msg) {
-      if (/<head>/.test(msg)) return;
-      originalError.call(console, msg);
-    };
-  };
-  resetWarnings = function resetWarnings() {
-    console.error = originalError; // eslint-disable-line no-console
-  };
-}
-
-var FrameComponent = function (_Component) {
-  inherits(FrameComponent, _Component);
-
-  function FrameComponent() {
-    classCallCheck(this, FrameComponent);
-
-    var _this = possibleConstructorReturn(this, _Component.call(this));
-
-    _this.state = {
-      iframeContentHeight: 0
-    };
-    _this.renderFrameContents = _this.renderFrameContents.bind(_this);
+    _this.updateIframe = _this.updateIframe.bind(_this);
+    _this.injectIframeResizerUrl = _this.injectIframeResizerUrl.bind(_this);
+    _this.onLoad = _this.onLoad.bind(_this);
+    _this.resizeIframe = _this.resizeIframe.bind(_this);
     return _this;
   }
 
-  FrameComponent.prototype.componentDidMount = function componentDidMount() {
-    var _this2 = this;
-
-    this.renderFrameContents();
-
-    this.iframe.onload = function () {
-      setTimeout(function () {
-        var doc = _this2.iframe.contentDocument;
-        var docFirstChild = doc.body.firstChild;
-
-        // 需要进一步验证，子元素是否生成
-        if (docFirstChild) {
-          var docHeight = doc.documentElement.scrollHeight;
-
-          // console.log(docHeight);
-
-          if (docHeight != _this2.state.iframeContentHeight) {
-            _this2.setState({
-              iframeContentHeight: docHeight
-            });
-          }
-        }
-      }, 400);
-    };
+  IframeResizer.prototype.componentDidMount = function componentDidMount() {
+    // can't update until we have a mounted iframe
+    this.updateIframe(this.props);
+    this.resizeIframe(this.props);
   };
 
-  FrameComponent.prototype.componentDidUpdate = function componentDidUpdate() {
-    this.renderFrameContents();
+  IframeResizer.prototype.UNSAFE_componentWillReceiveProps = function UNSAFE_componentWillReceiveProps(nextProps) {
+    // can replace content if we got new props
+    this.updateIframe(nextProps);
+    this.resizeIframe(nextProps);
   };
 
-  FrameComponent.prototype.componentWillUnmount = function componentWillUnmount() {
-    var doc = this.iframe.contentDocument;
-    if (doc) {
-      unmountComponentAtNode(doc.body);
+  IframeResizer.prototype.updateIframe = function updateIframe(props) {
+    var _context = this.context,
+        iframeGlobalStyles = _context.catalog.iframeGlobalStyles,
+        iframePageStyles = _context.catalog.page.iframePageStyles,
+        iframeGlobalScripts = _context.catalog.iframeGlobalScripts,
+        iframePageScripts = _context.catalog.page.iframePageScripts;
+
+    // has src - no injected content
+
+    if (props.src) return;
+    // do we have content to inject (content or children)
+    var content = props.content || props.children;
+    if (!content) return;
+    // get frame to inject into
+    var frame = this.frame;
+    if (!frame) return;
+    // verify frame document access
+    // Due to browser security, this will fail with the following error
+    //   Uncaught DOMException: Failed to read the 'contentDocument' property from 'HTMLIFrameElement':
+    //   Blocked a frame with origin "http://<hostname>" from accessing a cross-origin frame.
+    // resolve this by loading documents from the same domain name,
+    // or injecting HTML `content` vs. loading via `src`
+    var doc = frame.contentDocument;
+    if (!doc) return;
+    // replace iframe document content
+    if (typeof content === "string") {
+      // assume this is a HTML block
+      //   we could send this in via REACT dangerously set HTML
+      //   but we are in an iframe anyway, already a red-headed step-child.
+      doc.open();
+      doc.write(content);
+      doc.close();
+    } else {
+      // assume this is a REACT component
+      doc.open();
+      doc.write('<div id="iframe-root"></div>');
+      doc.close();
+      ReactDOM.render(content, doc.getElementById("iframe-root"));
     }
+    //插入样式
+    var allIframeStyles = Array.prototype.concat(iframeGlobalStyles, iframePageStyles, this.props.frameStyles);
+    allIframeStyles.forEach(function (link) {
+      if (link != undefined) {
+        var linkTag = doc.createElement("link");
+        linkTag.setAttribute("rel", "stylesheet");
+        linkTag.setAttribute("href", link);
+        doc.head.appendChild(linkTag);
+      }
+    });
+    // 插入脚本
+    var allIframeScripts = Array.prototype.concat(iframeGlobalScripts, iframePageScripts, this.props.frameScripts);
+    allIframeScripts.forEach(function (script) {
+      if (script != undefined) {
+        var scriptTag = doc.createElement("script");
+        scriptTag.setAttribute("src", script);
+        doc.body.appendChild(scriptTag);
+      }
+    });
   };
+  // inject the iframe resizer "content window" script
 
-  FrameComponent.prototype.renderFrameContents = function renderFrameContents() {
-    var _this3 = this;
 
-    if (!this.iframe) {
+  IframeResizer.prototype.injectIframeResizerUrl = function injectIframeResizerUrl() {
+    if (!this.props.iframeResizerUrl) return;
+    var frame = this.frame;
+    if (!frame) return;
+    // verify frame document access
+    // Due to browser security, this will fail with the following error
+    //   Uncaught DOMException: Failed to read the 'contentDocument' property from 'HTMLIFrameElement':
+    //   Blocked a frame with origin "http://<hostname>" from accessing a cross-origin frame.
+    // resolve this by loading documents from the same domain name,
+    // or injecting HTML `content` vs. loading via `src`
+    var doc = frame.contentDocument;
+    if (!doc) return;
+    // where can we insert into? (fail into whatever we can find)
+    var injectTarget = null;
+    ["body", "BODY", "head", "HEAD", "div", "DIV"].forEach(function (tagName) {
+      if (injectTarget) return;
+      var found = doc.getElementsByTagName(tagName);
+      if (!(found && found.length)) return;
+      injectTarget = found[0];
+    });
+    if (!injectTarget) {
+      console.error("Unable to inject iframe resizer script");
       return;
     }
+    var resizerScriptElement = document.createElement("script");
+    resizerScriptElement.src = this.props.iframeResizerUrl;
+    injectTarget.appendChild(resizerScriptElement);
+  };
 
-    var doc = this.iframe.contentDocument;
+  IframeResizer.prototype.onLoad = function onLoad() {
+    this.injectIframeResizerUrl();
+    // DISABLED because it's causing a loading loop :(
+    // if (this.props.onIframeLoaded) this.props.onIframeLoaded();
+  };
 
-    if (doc && doc.readyState === "complete") {
-      var contents = React.createElement(
-        "div",
-        null,
-        this.props.head,
-        this.props.children
-      );
-
-      // React warns when you render directly into the body since browser
-      // extensions also inject into the body and can mess up React.
-      doc.body.innerHTML = "<div class='contentWrap'></div>";
-      doc.head.innerHTML = "";
-
-      var base = doc.createElement("base");
-      base.setAttribute("href", window.location.href);
-      doc.head.appendChild(base);
-
-      // Clone styles from parent document head into the iframe, so components which use webpack's style-loader get rendered correctly.
-      // This doesn't clone any Catalog styles because they are either inline styles or part of the body.
-      var pageStyles = Array.from(document.querySelectorAll('head > style, head > link[rel="stylesheet"]'));
-      pageStyles.forEach(function (s) {
-        doc.head.appendChild(s.cloneNode(true));
-      });
-
-      swallowInvalidHeadWarning();
-      unstable_renderSubtreeIntoContainer(this, contents, doc.body.firstChild, function () {
-        if (_this3.props.onRender) {
-          raf(function () {
-            _this3.props.onRender(doc.body.firstChild);
-          });
-        }
-      });
-      resetWarnings();
-    } else {
-      setTimeout(this.renderFrameContents, 0);
+  IframeResizer.prototype.resizeIframe = function resizeIframe(props) {
+    var frame = this.frame;
+    if (!frame) return;
+    if (props.iframeResizerEnable) {
+      iframeResizer(props.iframeResizerOptions, frame);
     }
   };
 
-  FrameComponent.prototype.render = function render() {
-    var _this4 = this;
+  IframeResizer.prototype.render = function render() {
+    var _this2 = this;
 
-    var style = this.props.style;
+    var _props = this.props,
+        src = _props.src,
+        id = _props.id,
+        frameBorder = _props.frameBorder,
+        className = _props.className,
+        style = _props.style;
+
 
     return React.createElement("iframe", {
-      ref: function ref(el) {
-        _this4.iframe = el;
+      ref: function ref(node) {
+        return _this2.frame = node;
       },
-      className: /*#__PURE__*/ /*#__PURE__*/css(style, "label:FrameComponent;", "label:className;"),
-      height: this.state.iframeContentHeight
+      src: src,
+      id: id,
+      frameBorder: frameBorder,
+      className: className,
+      style: style,
+      onLoad: this.onLoad
     });
   };
 
-  return FrameComponent;
-}(Component);
+  return IframeResizer;
+}(React.Component);
 
-FrameComponent.propTypes = {
+IframeResizer.propTypes = {
+  // iframe content/document
+  // option 1. content of HTML to load in the iframe
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  // option 2. src to a URL to load in the iframe
+  src: PropTypes.string,
+  // iframe-resizer controls and helpers
+  iframeResizerEnable: PropTypes.bool,
+  iframeResizerOptions: PropTypes.object,
+  iframeResizerUrl: PropTypes.oneOfType([PropTypes.string, // URL to inject
+  PropTypes.bool // false = disable inject
+  ]),
+  // misc props to pass through to iframe
+  id: PropTypes.string,
+  frameBorder: PropTypes.number,
+  className: PropTypes.string,
   style: PropTypes.object,
-  head: PropTypes.node,
-  onRender: PropTypes.func,
-  children: PropTypes.node
+  // optional extra callback when iframe is loaded
+  // onIframeLoaded: PropTypes.func,
+  frameStyles: PropTypes.array,
+  frameScripts: PropTypes.array
+};
+IframeResizer.defaultProps = {
+  // resize iframe
+  iframeResizerEnable: true,
+  iframeResizerOptions: {
+    log: true,
+    // autoResize: true,
+    checkOrigin: false,
+    // resizeFrom: "parent"
+    heightCalculationMethod: "bodyOffset"
+    // initCallback: () => { console.log('ready!'); },
+    // resizedCallback: () => { console.log('resized!'); },
+  },
+  iframeResizerUrl: "https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.3/iframeResizer.contentWindow.min.js",
+  // misc props to pass through to iframe
+  frameBorder: 0,
+  style: {
+    width: "100%",
+    minHeight: 0
+  },
+  frameStyles: [],
+  frameScripts: []
 };
 
-var frameStyle = {
-  width: "100%",
-  // height: "100%",
-  lineHeight: 0,
-  margin: 0,
-  padding: 0,
-  border: "none"
-};
-
-var renderStyles = function renderStyles(styles) {
-  return styles.map(function (src, i) {
-    return React.createElement("link", { key: i, href: src, rel: "stylesheet" });
-  });
-};
-
-var Frame = function (_Component) {
-  inherits(Frame, _Component);
-
-  function Frame() {
-    classCallCheck(this, Frame);
-
-    var _this = possibleConstructorReturn(this, _Component.call(this));
-
-    _this.state = {};
-    return _this;
-  }
-
-  Frame.prototype.render = function render() {
-    var _props = this.props,
-        children = _props.children,
-        width = _props.width,
-        parentWidth = _props.parentWidth,
-        scrolling = _props.scrolling,
-        background = _props.background,
-        _props$frameStyles = _props.frameStyles,
-        frameStyles = _props$frameStyles === undefined ? [] : _props$frameStyles;
-    var _context = this.context,
-        _context$catalog$ifra = _context.catalog.iframeGlobalStyles,
-        iframeGlobalStyles = _context$catalog$ifra === undefined ? [] : _context$catalog$ifra,
-        _context$catalog$page = _context.catalog.page.iframePageStyles,
-        iframePageStyles = _context$catalog$page === undefined ? [] : _context$catalog$page;
-
-
-    var height = this.state.height || this.props.height;
-    var autoHeight = !this.props.height;
-    var scale = Math.min(1, parentWidth / width);
-    var scaledHeight = autoHeight ? height : height * scale;
-    var allIframeStyles = Array.prototype.concat(iframeGlobalStyles, iframePageStyles, frameStyles);
-
-    return React.createElement(
-      "div",
-      {
-        className: /*#__PURE__*/ /*#__PURE__*/css({
-          lineHeight: 0,
-          width: parentWidth,
-          height: scaledHeight
-        }, "label:Frame;", "label:className;")
-      },
-      React.createElement(
-        "div",
-        {
-          style: {
-            width: width,
-            height: height,
-            transformOrigin: "0% 0%",
-            transform: "scale( " + scale + " )",
-            overflow: "hidden"
-          }
-        },
-        React.createElement(
-          FrameComponent,
-          {
-            style: _extends({}, frameStyle, {
-              background: background,
-              overflow: scrolling ? "auto" : "hidden"
-            }),
-            head: [].concat(renderStyles(allIframeStyles))
-          },
-          children
-        )
-      )
-    );
-  };
-
-  return Frame;
-}(Component);
-Frame.propTypes = {
-  children: PropTypes.element,
-  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  parentWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  scrolling: PropTypes.bool,
-  background: PropTypes.string,
-  frameStyles: PropTypes.array
-};
-
-Frame.contextTypes = {
+IframeResizer.contextTypes = {
   catalog: catalogShape.isRequired
 };
 
@@ -2504,7 +2465,8 @@ var Html = function (_React$Component) {
         _props$frame = _props.frame,
         frame = _props$frame === undefined ? "true" : _props$frame,
         frameStyles = _props.frameStyles,
-        options = objectWithoutProperties(_props, ["catalog", "children", "frame", "frameStyles"]);
+        frameScripts = _props.frameScripts,
+        options = objectWithoutProperties(_props, ["catalog", "children", "frame", "frameStyles", "frameScripts"]);
     var _state = this.state,
         activeScreenSize = _state.activeScreenSize,
         parentWidth = _state.parentWidth,
@@ -2619,14 +2581,15 @@ var Html = function (_React$Component) {
           }), "label:Html;", "label:className;")
         },
         frame || activeScreenSize ? React.createElement(
-          Frame,
+          IframeResizer,
           {
             width: activeScreenSize && activeScreenSize.width,
             parentWidth: parentWidth ? parentWidth : "100%",
             height: activeScreenSize && activeScreenSize.height,
             scrolling: frame ? false : true,
             background: frameBackground,
-            frameStyles: frameStyles
+            frameStyles: frameStyles,
+            frameScripts: frameScripts
           },
           content
         ) : content
@@ -2649,7 +2612,8 @@ Html.propTypes = {
   noSource: PropTypes.bool,
   showSource: PropTypes.bool,
   frame: PropTypes.bool,
-  frameStyles: PropTypes.array
+  frameStyles: PropTypes.array,
+  frameScripts: PropTypes.array
 };
 
 var Html$1 = Specimen(undefined, undefined, { withChildren: true })(Html);
@@ -3413,6 +3377,270 @@ Video.propTypes = {
 };
 
 var Video$1 = Specimen()(Video);
+
+/*
+
+Modified react-frame-component@0.4.0 which supports an onRender callback (e.g. to measure contents);
+Original https://github.com/ryanseddon/react-frame-component/
+
+*/
+
+var hasConsole = typeof window !== "undefined" && window.console;
+var noop = function noop() {};
+var swallowInvalidHeadWarning = noop;
+var resetWarnings = noop;
+
+if (hasConsole) {
+  var originalError = console.error; // eslint-disable-line no-console
+  // Rendering a <head> into a body is technically invalid although it
+  // works. We swallow React's validateDOMNesting warning if that is the
+  // message to avoid confusion
+  swallowInvalidHeadWarning = function swallowInvalidHeadWarning() {
+    // eslint-disable-next-line no-console
+    console.error = function (msg) {
+      if (/<head>/.test(msg)) return;
+      originalError.call(console, msg);
+    };
+  };
+  resetWarnings = function resetWarnings() {
+    console.error = originalError; // eslint-disable-line no-console
+  };
+}
+
+var FrameComponent = function (_Component) {
+  inherits(FrameComponent, _Component);
+
+  function FrameComponent() {
+    classCallCheck(this, FrameComponent);
+
+    var _this = possibleConstructorReturn(this, _Component.call(this));
+
+    _this.state = {
+      iframeContentHeight: 0
+    };
+    _this.renderFrameContents = _this.renderFrameContents.bind(_this);
+    return _this;
+  }
+
+  FrameComponent.prototype.componentDidMount = function componentDidMount() {
+    var _this2 = this;
+
+    this.renderFrameContents();
+
+    this.iframe.onload = function () {
+      setTimeout(function () {
+        var doc = _this2.iframe.contentDocument;
+        var docFirstChild = doc.body.firstChild;
+
+        // 需要进一步验证，子元素是否生成
+        if (docFirstChild) {
+          var docHeight = doc.documentElement.scrollHeight;
+
+          // console.log(docHeight);
+
+          if (docHeight != _this2.state.iframeContentHeight) {
+            _this2.setState({
+              iframeContentHeight: docHeight
+            });
+          }
+        }
+      }, 400);
+    };
+  };
+
+  FrameComponent.prototype.componentDidUpdate = function componentDidUpdate() {
+    this.renderFrameContents();
+  };
+
+  FrameComponent.prototype.componentWillUnmount = function componentWillUnmount() {
+    var doc = this.iframe.contentDocument;
+    if (doc) {
+      unmountComponentAtNode(doc.body);
+    }
+  };
+
+  FrameComponent.prototype.renderFrameContents = function renderFrameContents() {
+    var _this3 = this;
+
+    if (!this.iframe) {
+      return;
+    }
+
+    var doc = this.iframe.contentDocument;
+
+    if (doc && doc.readyState === "complete") {
+      var contents = React.createElement(
+        "div",
+        null,
+        this.props.head,
+        this.props.children
+      );
+
+      // React warns when you render directly into the body since browser
+      // extensions also inject into the body and can mess up React.
+      doc.body.innerHTML = "<div class='contentWrap'></div>";
+      doc.head.innerHTML = "";
+
+      var base = doc.createElement("base");
+      base.setAttribute("href", window.location.href);
+      doc.head.appendChild(base);
+
+      // Clone styles from parent document head into the iframe, so components which use webpack's style-loader get rendered correctly.
+      // This doesn't clone any Catalog styles because they are either inline styles or part of the body.
+      var pageStyles = Array.from(document.querySelectorAll('head > style, head > link[rel="stylesheet"]'));
+      pageStyles.forEach(function (s) {
+        doc.head.appendChild(s.cloneNode(true));
+      });
+
+      swallowInvalidHeadWarning();
+      unstable_renderSubtreeIntoContainer(this, contents, doc.body.firstChild, function () {
+        if (_this3.props.onRender) {
+          raf(function () {
+            _this3.props.onRender(doc.body.firstChild);
+          });
+        }
+      });
+      resetWarnings();
+    } else {
+      setTimeout(this.renderFrameContents, 0);
+    }
+  };
+
+  FrameComponent.prototype.render = function render() {
+    var _this4 = this;
+
+    var style = this.props.style;
+
+    return React.createElement("iframe", {
+      ref: function ref(el) {
+        _this4.iframe = el;
+      },
+      className: /*#__PURE__*/ /*#__PURE__*/css(style, "label:FrameComponent;", "label:className;"),
+      height: this.state.iframeContentHeight
+    });
+  };
+
+  return FrameComponent;
+}(Component);
+
+FrameComponent.propTypes = {
+  style: PropTypes.object,
+  head: PropTypes.node,
+  onRender: PropTypes.func,
+  children: PropTypes.node
+};
+
+var frameStyle = {
+  width: "100%",
+  height: "100%",
+  lineHeight: 0,
+  margin: 0,
+  padding: 0,
+  border: "none"
+};
+
+var renderStyles = function renderStyles(styles) {
+  return styles.map(function (src, i) {
+    return React.createElement("link", { key: i, href: src, rel: "stylesheet" });
+  });
+};
+
+var Frame = function (_Component) {
+  inherits(Frame, _Component);
+
+  function Frame() {
+    classCallCheck(this, Frame);
+
+    var _this = possibleConstructorReturn(this, _Component.call(this));
+
+    _this.state = {};
+    return _this;
+  }
+
+  Frame.prototype.render = function render() {
+    var _this2 = this;
+
+    var _props = this.props,
+        children = _props.children,
+        width = _props.width,
+        parentWidth = _props.parentWidth,
+        scrolling = _props.scrolling,
+        background = _props.background,
+        _props$frameStyles = _props.frameStyles,
+        frameStyles = _props$frameStyles === undefined ? [] : _props$frameStyles;
+    var _context = this.context,
+        _context$catalog$ifra = _context.catalog.iframeGlobalStyles,
+        iframeGlobalStyles = _context$catalog$ifra === undefined ? [] : _context$catalog$ifra,
+        _context$catalog$page = _context.catalog.page.iframePageStyles,
+        iframePageStyles = _context$catalog$page === undefined ? [] : _context$catalog$page;
+
+
+    var height = this.state.height || this.props.height;
+    var autoHeight = !this.props.height;
+    var scale = Math.min(1, parentWidth / width);
+    var scaledHeight = autoHeight ? height : height * scale;
+    var allIframeStyles = Array.prototype.concat(iframeGlobalStyles, iframePageStyles, frameStyles);
+
+    return React.createElement(
+      "div",
+      {
+        className: /*#__PURE__*/ /*#__PURE__*/css({
+          lineHeight: 0,
+          width: parentWidth,
+          height: scaledHeight
+        }, "label:Frame;", "label:className;")
+      },
+      React.createElement(
+        "div",
+        {
+          style: {
+            width: width,
+            height: height,
+            transformOrigin: "0% 0%",
+            transform: "scale( " + scale + " )",
+            overflow: "hidden"
+          }
+        },
+        React.createElement(
+          FrameComponent,
+          {
+            style: _extends({}, frameStyle, {
+              background: background,
+              overflow: scrolling ? "auto" : "hidden"
+            }),
+            head: [].concat(renderStyles(allIframeStyles)),
+            onRender: autoHeight ? function (content) {
+              var contentHeight = content.offsetHeight;
+              if (contentHeight !== height) {
+                _this2.setState({ height: contentHeight });
+              }
+            } : function () {
+              return null;
+            }
+          },
+          children
+        )
+      )
+    );
+  };
+
+  return Frame;
+}(Component);
+
+
+Frame.propTypes = {
+  children: PropTypes.element,
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  parentWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  scrolling: PropTypes.bool,
+  background: PropTypes.string,
+  frameStyles: PropTypes.array
+};
+
+Frame.contextTypes = {
+  catalog: catalogShape.isRequired
+};
 
 /*
 
@@ -4918,7 +5146,8 @@ var CatalogContext = function (_Component) {
         basePath = _props$configuration.basePath,
         publicUrl = _props$configuration.publicUrl,
         useBrowserHistory = _props$configuration.useBrowserHistory,
-        iframeGlobalStyles = _props$configuration.iframeGlobalStyles;
+        iframeGlobalStyles = _props$configuration.iframeGlobalStyles,
+        iframeGlobalScripts = _props$configuration.iframeGlobalScripts;
     var router = this.context.router;
 
     return {
@@ -4943,7 +5172,8 @@ var CatalogContext = function (_Component) {
         publicUrl: publicUrl,
         logoSrc: logoSrc,
         useBrowserHistory: useBrowserHistory,
-        iframeGlobalStyles: iframeGlobalStyles
+        iframeGlobalStyles: iframeGlobalStyles,
+        iframeGlobalScripts: iframeGlobalScripts
       }
     }; // Used for internal link lookup
   };

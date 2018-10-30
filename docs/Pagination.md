@@ -4,6 +4,7 @@
 
 ```html
 frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/compatible.css']
+frameScripts: ['https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js']
 ---
 <div class="tc-15-page">
     <div class="tc-15-page-state"><span class="tc-15-page-text">已选<strong>6</strong>项，共<strong>270</strong>项</span>
@@ -48,6 +49,7 @@ frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/c
 ```html
 frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/compatible.css']
 ---
+<p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?</p>
 <div class="tc-15-page">
     <div class="tc-15-page-state"><span class="tc-15-page-text">已选<strong>6</strong>项，共<strong>270</strong>项</span>
     </div>
