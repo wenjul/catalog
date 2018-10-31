@@ -126,6 +126,18 @@ class IframeResizer extends React.Component {
     const resizerScriptElement = document.createElement("script");
     resizerScriptElement.src = this.props.iframeResizerUrl;
     injectTarget.appendChild(resizerScriptElement);
+
+    const customOptionsElement = document.createElement("script");
+    customOptionsElement.text = ` 
+    window.iFrameResizer = {
+     heightCalculationMethod: function(){
+       const iframeWrap = document.querySelector('div[data-iframe-height]');
+       if(iframeWrap){
+         return iframeWrap.scrollHeight;
+       }
+     }
+    }`;
+    injectTarget.appendChild(customOptionsElement);
   }
   onLoad() {
     this.injectIframeResizerUrl();

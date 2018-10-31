@@ -1126,6 +1126,10 @@ var IframeResizer = function (_React$Component) {
     var resizerScriptElement = document.createElement("script");
     resizerScriptElement.src = this.props.iframeResizerUrl;
     injectTarget.appendChild(resizerScriptElement);
+
+    var customOptionsElement = document.createElement("script");
+    customOptionsElement.text = " \n    window.iFrameResizer = {\n     heightCalculationMethod: function(){\n       const iframeWrap = document.querySelector('div[data-iframe-height]');\n       if(iframeWrap){\n         return iframeWrap.scrollHeight;\n       }\n     }\n    }";
+    injectTarget.appendChild(customOptionsElement);
   };
 
   IframeResizer.prototype.onLoad = function onLoad() {
