@@ -3,6 +3,7 @@ import commonjs from "rollup-plugin-commonjs";
 import nodeResolve from "rollup-plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 import replace from "rollup-plugin-replace";
+import postcss from "rollup-plugin-postcss";
 
 let plugins = [
   nodeResolve({
@@ -45,6 +46,10 @@ let plugins = [
   }),
   babel({
     exclude: "node_modules/**"
+  }),
+  postcss({
+    extract: true,
+    plugins: []
   })
 ];
 

@@ -3,6 +3,7 @@
 用于表格底部，用于表格单页可显示列数，表格整体显示行总数，和翻页的控制，可根据业务的需求来进行选用，通常与表格一起使用。
 
 ```html
+dark: true
 frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/compatible.css']
 frameScripts: ['https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js']
 ---
@@ -78,6 +79,7 @@ frameStyles: ['http://119.29.8.64/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/c
 适用于监控视图实例切换等
 
 ```html
+plain: false
 frameStyles: ['https://imgcache.qq.com/open_proj/proj_qcloud_v2/bee-v2/css/bee.css']
 ---
 <div class="pagination">

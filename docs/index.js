@@ -205,6 +205,9 @@ ReactDOM.render(
       }
     }
     pages={pages}
+    styles={[
+      "https://imgcache.qq.com/open_proj/proj_qcloud_v2/bee-ui-docs/catalog/static/prism.css"
+    ]}
     iframeGlobalStyles={[
       "https://imgcache.qq.com/open_proj/proj_qcloud_v2/bee-v2/css/bee.css"
     ]}

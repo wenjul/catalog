@@ -5,8 +5,6 @@ import React, { Component, Children, PureComponent, createElement, isValidElemen
 import { filter, compose, split, complement, isEmpty, mergeAll, is, toLower, head, or } from 'ramda';
 import { safeLoad, CORE_SCHEMA, Type, Schema } from 'js-yaml';
 import Prism from 'prismjs';
-import 'prismjs/components/prism-jsx';
-import 'prismjs/components/prism-markdown';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Tooltip from '@material-ui/core/Tooltip';
 import { hcl } from 'd3-color';
@@ -526,50 +524,54 @@ function Specimen(mapBodyToProps, mapOptionsToProps) {
   };
 }
 
-var getStyle = function getStyle(theme) {
-  return {
-    pre: _extends({}, text(theme, -0.5), {
-      background: "#fff",
-      border: "none",
-      boxSizing: "border-box",
-      color: theme.codeColor,
-      display: "block",
-      height: "auto",
-      margin: 0,
-      overflow: "auto",
-      WebkitOverflowScrolling: "touch",
-      padding: 20,
-      whiteSpace: "pre",
-      width: "100%"
-    }),
-    code: {
-      fontFamily: theme.fontMono,
-      fontWeight: 400
-    }
-  };
-};
+// import { css } from "../../emotion";
+// import { text } from "../../styles/typography";
 
-var isToken = function isToken(t) {
-  return t instanceof Prism.Token;
-};
+// const getStyle = theme => {
+//   return {
+//     pre: {
+//       ...text(theme, -0.5),
+//       background: "#fff",
+//       border: "none",
+//       boxSizing: "border-box",
+//       color: theme.codeColor,
+//       display: "block",
+//       height: "auto",
+//       margin: 0,
+//       overflow: "auto",
+//       WebkitOverflowScrolling: "touch",
+//       padding: 20,
+//       whiteSpace: "pre",
+//       width: "100%"
+//     },
+//     code: {
+//       fontFamily: theme.fontMono,
+//       fontWeight: 400
+//     }
+//   };
+// };
 
-var renderPrismTokens = function renderPrismTokens(tokens, styles) {
-  return tokens.map(function (t, i) {
-    if (isToken(t)) {
-      return React.createElement(
-        "span",
-        { key: t.type + "-" + i, className: /*#__PURE__*/ /*#__PURE__*/css(styles[t.type], "label:renderPrismTokens;", "label:className;") },
-        Array.isArray(t.content) ? renderPrismTokens(t.content, styles) : t.content
-      );
-    }
+// const isToken = t => t instanceof Prism.Token;
 
-    if (typeof t === "string") {
-      return t;
-    }
+// const renderPrismTokens = (tokens, styles) => {
+//   return tokens.map((t, i) => {
+//     if (isToken(t)) {
+//       return (
+//         <span key={`${t.type}-${i}`} className={css(styles[t.type])}>
+//           {Array.isArray(t.content)
+//             ? renderPrismTokens(t.content, styles)
+//             : t.content}
+//         </span>
+//       );
+//     }
 
-    throw Error("wat");
-  });
-};
+//     if (typeof t === "string") {
+//       return t;
+//     }
+
+//     throw Error("wat");
+//   });
+// };
 
 var HighlightedCode = function (_Component) {
   inherits(HighlightedCode, _Component);
@@ -579,22 +581,24 @@ var HighlightedCode = function (_Component) {
     return possibleConstructorReturn(this, _Component.apply(this, arguments));
   }
 
+  HighlightedCode.prototype.componentDidMount = function componentDidMount() {
+    Prism.highlightAll();
+  };
+
   HighlightedCode.prototype.render = function render() {
     var _props = this.props,
         language = _props.language,
-        theme = _props.theme,
         code = _props.code;
-
-    var styles = getStyle(theme);
-    var lang = Prism.languages.hasOwnProperty(language) ? language : null;
+    // const styles = getStyle(theme);
+    // const lang = Prism.languages.hasOwnProperty(language) ? language : null;
 
     return React.createElement(
       "pre",
-      { className: /*#__PURE__*/ /*#__PURE__*/css(styles.pre, "label:HighlightedCode;", "label:className;") },
+      null,
       React.createElement(
         "code",
-        { className: /*#__PURE__*/ /*#__PURE__*/css(styles.code, "label:HighlightedCode;", "label:className;") },
-        lang ? renderPrismTokens(Prism.tokenize(code, Prism.languages[lang], lang), theme.codeStyles) : code
+        { className: "language-" + language },
+        code
       )
     );
   };
@@ -605,14 +609,13 @@ var HighlightedCode = function (_Component) {
 
 HighlightedCode.propTypes = {
   language: PropTypes.string,
-  theme: PropTypes.object.isRequired,
   code: PropTypes.string.isRequired
 };
 
 // import { relative } from "path";
 // import { isAbsolute } from "upath";
 
-function getStyle$1(theme) {
+function getStyle(theme) {
   return {
     container: _extends({}, text(theme, -0.5), {
       boxSizing: "border-box",
@@ -677,7 +680,7 @@ var Code = function (_React$Component) {
         raw = _props.raw;
     var viewSource = this.state.viewSource;
 
-    var styles = getStyle$1(theme);
+    var styles = getStyle(theme);
 
     // console.log(rawBody);
 
@@ -1954,7 +1957,7 @@ var renderMarkdown = (function (_ref) {
   }));
 });
 
-function getStyle$2(theme) {
+function getStyle$1(theme) {
   return {
     container: {
       flexBasis: "100%"
@@ -2039,7 +2042,7 @@ var Hint = function (_React$Component) {
         important = _props.important,
         directive = _props.directive;
 
-    var styles = getStyle$2(theme);
+    var styles = getStyle$1(theme);
 
     var hintStyle = cx( /*#__PURE__*/css(styles.hint, "label:hintStyle;"), (_cx = {}, _cx[/*#__PURE__*/ /*#__PURE__*/css(styles.warning, "label:hintStyle;", "label:hintStyle;")] = warning, _cx[/*#__PURE__*/ /*#__PURE__*/css(styles.directive, "label:hintStyle;", "label:hintStyle;")] = directive, _cx[/*#__PURE__*/ /*#__PURE__*/css(styles.neutral, "label:hintStyle;", "label:hintStyle;")] = neutral, _cx[/*#__PURE__*/ /*#__PURE__*/css(styles.important, "label:hintStyle;", "label:hintStyle;")] = important, _cx));
 
@@ -2122,7 +2125,7 @@ Preview.propTypes = {
   proportion: PropTypes.number.isRequired
 };
 
-function getStyle$3(theme) {
+function getStyle$2(theme) {
   return {
     tabContainer: {
       background: "white",
@@ -2172,7 +2175,7 @@ var ResponsiveTabs = function ResponsiveTabs(_ref) {
       theme = _ref.theme,
       parentWidth = _ref.parentWidth;
 
-  var styles = getStyle$3(theme);
+  var styles = getStyle$2(theme);
   return React.createElement(
     "div",
     { className: /*#__PURE__*/ /*#__PURE__*/css(styles.tabContainer, "label:ResponsiveTabs;", "label:className;") },
@@ -2309,7 +2312,9 @@ var validateSizes = function validateSizes(input, catalogSizes) {
 var PADDING = 3;
 var SIZE = 20;
 
-function getStyle$4(theme) {
+function getStyle$3(theme) {
+  var _copyCode;
+
   return {
     container: {
       background: "#fff",
@@ -2342,13 +2347,8 @@ function getStyle$4(theme) {
       boxSizing: "border-box",
       width: "100%",
       position: "relative",
-      padding: 20,
-
-      "& pre": {
-        padding: 0,
-        maxHeight: "500px",
-        overflow: "auto"
-      }
+      padding: "20px 0 20px 20px",
+      "& pre": { padding: 0, maxHeight: "500px", overflow: "auto" }
     },
     content: {
       background: "url(" + theme.checkerboardPatternLight + ")",
@@ -2370,13 +2370,18 @@ function getStyle$4(theme) {
       padding: "15px",
       textAlign: "center"
     },
-    copyCode: {
+    copyCode: (_copyCode = {
       position: "absolute",
       top: 20,
       right: 20,
       cursor: "pointer",
-      color: theme.textColor
-    },
+      color: theme.textColor,
+      backgroundColor: "white",
+      width: 30,
+      height: 30,
+      lineHeight: "35px",
+      textAlign: "center"
+    }, _copyCode["backgroundColor"] = "white", _copyCode.borderRadius = "50%", _copyCode),
     copyIcon: { fill: "#888888", ":hover": { fill: theme.brandColor } }
   };
 }
@@ -2476,16 +2481,20 @@ var Html = function (_React$Component) {
         frame = _props$frame === undefined ? "true" : _props$frame,
         frameStyles = _props.frameStyles,
         frameScripts = _props.frameScripts,
-        options = objectWithoutProperties(_props, ["catalog", "children", "frame", "frameStyles", "frameScripts"]);
+        _props$plain = _props.plain,
+        plain = _props$plain === undefined ? "true" : _props$plain,
+        _props$light = _props.light,
+        light = _props$light === undefined ? "true" : _props$light,
+        options = objectWithoutProperties(_props, ["catalog", "children", "frame", "frameStyles", "frameScripts", "plain", "light"]);
     var _state = this.state,
         activeScreenSize = _state.activeScreenSize,
         parentWidth = _state.parentWidth,
         viewSource = _state.viewSource;
 
-    var styles = getStyle$4(theme);
+    var styles = getStyle$3(theme);
     var validSizes = validateSizes(options.responsive, responsiveSizes);
 
-    var exampleStyles = _extends({}, options.plain ? styles.plain : null, options.light ? styles.light : null, options.dark ? styles.dark : null, options.plain && options.light ? styles.plain_light : null, options.plain && options.dark ? styles.plain_dark : null, options.responsive ? styles.responsive : null);
+    var exampleStyles = _extends({}, plain ? styles.plain : null, light ? styles.light : null, options.dark ? styles.dark : null, plain && light ? styles.plain_light : null, plain && options.dark ? styles.plain_dark : null, options.responsive ? styles.responsive : null);
 
     var frameBackground = options.responsive ? exampleStyles.background || styles.content.background : undefined;
     var exampleBackground = options.responsive ? "white" : exampleStyles.background || styles.content.background;
@@ -2785,7 +2794,7 @@ Image$1.propTypes = {
 
 var Image$2 = Specimen()(Image$1);
 
-function getStyle$5(theme) {
+function getStyle$4(theme) {
   return {
     container: {
       flexBasis: "100%",
@@ -2871,7 +2880,7 @@ var Table = function (_React$Component) {
         rows = _props.rows,
         theme = _props.catalog.theme;
 
-    var _getStyle = getStyle$5(theme),
+    var _getStyle = getStyle$4(theme),
         cell = _getStyle.cell,
         container = _getStyle.container,
         table = _getStyle.table,
@@ -2930,7 +2939,7 @@ Table.propTypes = {
 Table.defaultProps = {};
 var Table$1 = Specimen(undefined, undefined, { withChildren: false })(Table);
 
-function getStyle$6(theme) {
+function getStyle$5(theme) {
   return {
     container: {
       background: "#fff",
@@ -2987,7 +2996,7 @@ var Type$1 = function (_React$Component) {
         theme = _props.catalog.theme,
         options = objectWithoutProperties(_props, ["catalog"]);
 
-    var styles = getStyle$6(theme);
+    var styles = getStyle$5(theme);
 
     // check if a shorter paragraph should is demanded
     var truncate = options.shorter ? 100 : null;
@@ -3171,7 +3180,7 @@ var DownloadIcon = function DownloadIcon(_ref // eslint-disable-line
   );
 };
 
-function getStyle$7(theme) {
+function getStyle$6(theme) {
   var baseLinkStyle = {
     color: theme.brandColor,
     transition: "none",
@@ -3254,7 +3263,7 @@ var DownloadSpecimen = function (_React$Component) {
         url = _props.url,
         filename = _props.filename;
 
-    var styles = getStyle$7(theme);
+    var styles = getStyle$6(theme);
 
     var image = this.props.span !== 1 ? React.createElement(DownloadIcon, { styles: styles }) : null;
 
@@ -3811,7 +3820,7 @@ var transformJSX = (function (jsx, imports) {
 var PADDING$1 = 3;
 var SIZE$1 = 20;
 
-function getStyle$8(theme) {
+function getStyle$7(theme) {
   return {
     container: {
       background: "#fff",
@@ -3972,7 +3981,7 @@ var ReactSpecimen = function (_Component) {
         parentWidth = _state.parentWidth,
         viewSource = _state.viewSource;
 
-    var styles = getStyle$8(theme);
+    var styles = getStyle$7(theme);
     var validSizes = validateSizes(options.responsive, responsiveSizes);
 
     var exampleStyles = _extends({}, options.plain ? styles.plain : null, options.light ? styles.light : null, options.dark ? styles.dark : null, options.plain && options.light ? styles.plain_light : null, options.plain && options.dark ? styles.plain_dark : null, options.responsive ? styles.responsive : null);

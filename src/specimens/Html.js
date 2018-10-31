@@ -48,13 +48,8 @@ function getStyle(theme) {
       boxSizing: "border-box",
       width: "100%",
       position: "relative",
-      padding: 20,
-
-      "& pre": {
-        padding: 0,
-        maxHeight: "500px",
-        overflow: "auto"
-      }
+      padding: "20px 0 20px 20px",
+      "& pre": { padding: 0, maxHeight: "500px", overflow: "auto" }
     },
     content: {
       background: `url(${theme.checkerboardPatternLight})`,
@@ -81,7 +76,14 @@ function getStyle(theme) {
       top: 20,
       right: 20,
       cursor: "pointer",
-      color: theme.textColor
+      color: theme.textColor,
+      backgroundColor: "white",
+      width: 30,
+      height: 30,
+      lineHeight: "35px",
+      textAlign: "center",
+      backgroundColor: "white",
+      borderRadius: "50%"
     },
     copyIcon: { fill: "#888888", ":hover": { fill: theme.brandColor } }
   };
@@ -167,6 +169,8 @@ class Html extends React.Component {
       frame = "true",
       frameStyles,
       frameScripts,
+      plain = "true",
+      light = "true",
       ...options
     } = this.props;
     const { activeScreenSize, parentWidth, viewSource } = this.state;
@@ -174,11 +178,11 @@ class Html extends React.Component {
     const validSizes = validateSizes(options.responsive, responsiveSizes);
 
     const exampleStyles = {
-      ...(options.plain ? styles.plain : null),
-      ...(options.light ? styles.light : null),
+      ...(plain ? styles.plain : null),
+      ...(light ? styles.light : null),
       ...(options.dark ? styles.dark : null),
-      ...(options.plain && options.light ? styles.plain_light : null),
-      ...(options.plain && options.dark ? styles.plain_dark : null),
+      ...(plain && light ? styles.plain_light : null),
+      ...(plain && options.dark ? styles.plain_dark : null),
       ...(options.responsive ? styles.responsive : null)
     };
 
