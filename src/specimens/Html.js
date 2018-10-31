@@ -47,8 +47,14 @@ function getStyle(theme) {
       borderTop: "1px solid #eee",
       boxSizing: "border-box",
       width: "100%",
-      height: "auto",
-      position: "relative"
+      position: "relative",
+      padding: 20,
+
+      "& pre": {
+        padding: 0,
+        maxHeight: "500px",
+        overflow: "auto"
+      }
     },
     content: {
       background: `url(${theme.checkerboardPatternLight})`,

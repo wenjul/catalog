@@ -66,7 +66,7 @@ class IframeResizer extends React.Component {
     } else {
       // assume this is a REACT component
       doc.open();
-      doc.write('<div id="iframe-root"></div>');
+      doc.write('<div id="iframe-root" data-iframe-height></div>');
       doc.close();
       ReactDOM.render(content, doc.getElementById("iframe-root"));
     }
@@ -183,11 +183,11 @@ IframeResizer.defaultProps = {
   // resize iframe
   iframeResizerEnable: true,
   iframeResizerOptions: {
-    log: true,
-    // autoResize: true,
+    // log: true,
+    autoResize: true,
     checkOrigin: false,
     // resizeFrom: "parent"
-    heightCalculationMethod: "bodyOffset"
+    heightCalculationMethod: "taggedElement"
     // initCallback: () => { console.log('ready!'); },
     // resizedCallback: () => { console.log('resized!'); },
   },
@@ -196,8 +196,8 @@ IframeResizer.defaultProps = {
   // misc props to pass through to iframe
   frameBorder: 0,
   style: {
-    width: "100%",
-    minHeight: 0
+    width: "100%"
+    // minHeight: 20,
   },
   frameStyles: [],
   frameScripts: []

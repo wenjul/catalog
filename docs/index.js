@@ -184,7 +184,7 @@ const pages = [
     content: markdownLoader("test/test"),
     styles: [`${process.env.PUBLIC_URL}/test/test.css`],
     scripts: [`${process.env.PUBLIC_URL}/test/test.js`],
-    hideFromMenu: true
+    hideFromMenu: false
   },
   {
     path: "testtemplate",

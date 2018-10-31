@@ -1072,7 +1072,7 @@ var IframeResizer = function (_React$Component) {
     } else {
       // assume this is a REACT component
       doc.open();
-      doc.write('<div id="iframe-root"></div>');
+      doc.write('<div id="iframe-root" data-iframe-height></div>');
       doc.close();
       ReactDOM.render(content, doc.getElementById("iframe-root"));
     }
@@ -1195,11 +1195,11 @@ IframeResizer.defaultProps = {
   // resize iframe
   iframeResizerEnable: true,
   iframeResizerOptions: {
-    log: true,
-    // autoResize: true,
+    // log: true,
+    autoResize: true,
     checkOrigin: false,
     // resizeFrom: "parent"
-    heightCalculationMethod: "bodyOffset"
+    heightCalculationMethod: "taggedElement"
     // initCallback: () => { console.log('ready!'); },
     // resizedCallback: () => { console.log('resized!'); },
   },
@@ -1207,8 +1207,8 @@ IframeResizer.defaultProps = {
   // misc props to pass through to iframe
   frameBorder: 0,
   style: {
-    width: "100%",
-    minHeight: 0
+    width: "100%"
+    // minHeight: 20,
   },
   frameStyles: [],
   frameScripts: []
@@ -2337,8 +2337,14 @@ function getStyle$4(theme) {
       borderTop: "1px solid #eee",
       boxSizing: "border-box",
       width: "100%",
-      height: "auto",
-      position: "relative"
+      position: "relative",
+      padding: 20,
+
+      "& pre": {
+        padding: 0,
+        maxHeight: "500px",
+        overflow: "auto"
+      }
     },
     content: {
       background: "url(" + theme.checkerboardPatternLight + ")",
