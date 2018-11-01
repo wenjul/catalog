@@ -21,11 +21,11 @@ class IframeResizer extends React.Component {
     this.updateIframe(this.props);
     this.resizeIframe(this.props);
   }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // can replace content if we got new props
-    this.updateIframe(nextProps);
-    this.resizeIframe(nextProps);
-  }
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   // can replace content if we got new props
+  //   this.updateIframe(nextProps);
+  //   this.resizeIframe(nextProps);
+  // }
 
   updateIframe(props) {
     const {

@@ -49,7 +49,12 @@ function getStyle(theme) {
       width: "100%",
       position: "relative",
       padding: "20px 0 20px 20px",
-      "& pre": { padding: 0, maxHeight: "500px", overflow: "auto" }
+      "& pre": {
+        padding: "0 !important",
+        margin: "0 !important",
+        maxHeight: "500px",
+        overflow: "auto"
+      }
     },
     content: {
       background: `url(${theme.checkerboardPatternLight})`,

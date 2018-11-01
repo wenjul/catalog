@@ -1041,12 +1041,11 @@ var IframeResizer = function (_React$Component) {
     this.updateIframe(this.props);
     this.resizeIframe(this.props);
   };
-
-  IframeResizer.prototype.UNSAFE_componentWillReceiveProps = function UNSAFE_componentWillReceiveProps(nextProps) {
-    // can replace content if we got new props
-    this.updateIframe(nextProps);
-    this.resizeIframe(nextProps);
-  };
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   // can replace content if we got new props
+  //   this.updateIframe(nextProps);
+  //   this.resizeIframe(nextProps);
+  // }
 
   IframeResizer.prototype.updateIframe = function updateIframe(props) {
     var _context = this.context,
@@ -2356,7 +2355,12 @@ function getStyle$3(theme) {
       width: "100%",
       position: "relative",
       padding: "20px 0 20px 20px",
-      "& pre": { padding: 0, maxHeight: "500px", overflow: "auto" }
+      "& pre": {
+        padding: "0 !important",
+        margin: "0 !important",
+        maxHeight: "500px",
+        overflow: "auto"
+      }
     },
     content: {
       background: "url(" + theme.checkerboardPatternLight + ")",
