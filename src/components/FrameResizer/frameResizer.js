@@ -120,6 +120,7 @@ class IframeResizer extends React.Component {
       injectTarget = found[0];
     });
     if (!injectTarget) {
+      // eslint-disable-next-line no-console
       console.error("Unable to inject iframe resizer script");
       return;
     }

@@ -1,4 +1,4 @@
-/*! Catalog v3.6.0 https://www.catalog.style/ */
+/*! Catalog v3.7.0 https://www.catalog.style/ */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -1130,6 +1130,7 @@ var IframeResizer = function (_React$Component) {
       injectTarget = found[0];
     });
     if (!injectTarget) {
+      // eslint-disable-next-line no-console
       console.error("Unable to inject iframe resizer script");
       return;
     }
@@ -2320,8 +2321,6 @@ var PADDING = 3;
 var SIZE = 20;
 
 function getStyle$3(theme) {
-  var _copyCode;
-
   return {
     container: {
       background: "#fff",
@@ -2382,7 +2381,7 @@ function getStyle$3(theme) {
       padding: "15px",
       textAlign: "center"
     },
-    copyCode: (_copyCode = {
+    copyCode: {
       position: "absolute",
       top: 20,
       right: 20,
@@ -2392,8 +2391,9 @@ function getStyle$3(theme) {
       width: 30,
       height: 30,
       lineHeight: "35px",
-      textAlign: "center"
-    }, _copyCode["backgroundColor"] = "white", _copyCode.borderRadius = "50%", _copyCode),
+      textAlign: "center",
+      borderRadius: "50%"
+    },
     copyIcon: { fill: "#888888", ":hover": { fill: theme.brandColor } }
   };
 }
@@ -3381,7 +3381,7 @@ var Video = function (_React$Component) {
         " ",
         React__default.createElement(
           "a",
-          { href: parsedSrc, target: "_blank" },
+          { href: parsedSrc, target: "_blank", rel: "noopener noreferrer" },
           "video"
         ),
         " ",

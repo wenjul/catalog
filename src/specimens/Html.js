@@ -87,7 +87,6 @@ function getStyle(theme) {
       height: 30,
       lineHeight: "35px",
       textAlign: "center",
-      backgroundColor: "white",
       borderRadius: "50%"
     },
     copyIcon: { fill: "#888888", ":hover": { fill: theme.brandColor } }

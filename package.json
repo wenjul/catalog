@@ -1,6 +1,6 @@
 {
-    "name": "catalog_docs",
-    "version": "3.6.0",
+    "name": "catalog_ds_docs",
+    "version": "3.7.0",
     "description": "Create living style guides using Markdown or React",
     "keywords": [
         "styleguide",
@@ -11,7 +11,7 @@
         "markdown"
     ],
     "homepage": "https://www.catalog.style/",
-    "bugs": "https://github.com/interactivethings/catalog/issues",
+    "bugs": "https://github.com/wenjul/catalog/issues",
     "main": "dist/catalog.cjs.js",
     "module": "dist/catalog.es.js",
     "unpkg": "dist/catalog-standalone.min.js",
@@ -32,7 +32,6 @@
     },
     "scripts": {
         "preversion": "make test",
-        "prepublishOnly": "make test && make build",
         "precommit": "lint-staged",
         "prettier-all": "prettier --write \"**/*.{js,ts,tsx}\""
     },
